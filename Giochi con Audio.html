@@ -1,0 +1,1398 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='75' font-size='80'>📺</text></svg>">
+<title>STUDIO GIOCHI</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#0a0614; --purple:#6b21ff; --pink:#ff2d78; --yellow:#ffe600;
+  --cyan:#00e5ff; --green:#00e676; --card-bg:rgba(255,255,255,0.04);
+  --border:rgba(255,255,255,0.08); --text:#f0eaff; --muted:rgba(240,234,255,0.5);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;min-height:100vh;overflow-x:hidden;}
+body::before,body::after{content:'';position:fixed;top:0;bottom:0;width:6px;background:linear-gradient(180deg,var(--purple),var(--pink),var(--yellow),var(--purple));background-size:100% 400%;animation:edgeScroll 3s linear infinite;z-index:9999;pointer-events:none;}
+body::before{left:0;}body::after{right:0;animation-direction:reverse;}
+@keyframes edgeScroll{0%{background-position:0% 0%}100%{background-position:0% 100%}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+@keyframes titleIn{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.03)}}
+@keyframes fadeIn{from{opacity:0;transform:scale(0.95)}to{opacity:1;transform:scale(1)}}
+@keyframes revealLetter{from{transform:rotateX(-90deg) scale(0.8);opacity:0}to{transform:rotateX(0) scale(1);opacity:1}}
+
+.screen{display:none;min-height:100vh;padding:24px 32px;flex-direction:column;}
+.screen.active{display:flex;}
+
+/* HOME */
+#screen-home{align-items:center;justify-content:center;}
+.home-badge{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:3px;color:var(--pink);margin-bottom:24px;display:flex;align-items:center;gap:8px;}
+.home-badge::before{content:'';width:8px;height:8px;background:var(--pink);border-radius:50%;animation:blink 1s ease-in-out infinite;}
+.home-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(64px,12vw,120px);letter-spacing:6px;color:var(--yellow);text-shadow:0 0 60px rgba(255,230,0,0.4);text-align:center;line-height:0.9;animation:titleIn 0.8s cubic-bezier(0.16,1,0.3,1) both;display:flex;align-items:center;justify-content:center;}
+.antenna-icon img{width:100%;height:100%;object-fit:contain;}
+.mute-btn{position:fixed;bottom:20px;left:20px;width:50px;height:50px;border-radius:50%;background:var(--purple);border:2px solid var(--pink);color:var(--yellow);font-size:24px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:100;transition:all 0.3s;box-shadow:0 4px 16px rgba(107,33,255,0.3);}
+.mute-btn:hover{transform:scale(1.1);box-shadow:0 6px 24px rgba(107,33,255,0.5);}
+.mute-btn.muted{background:var(--pink);border-color:var(--yellow);opacity:0.7;}
+.home-sub{color:var(--muted);margin:20px 0 60px;font-size:15px;text-align:center;}
+.games-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;max-width:960px;width:100%;}
+@media(max-width:700px){.games-grid{grid-template-columns:1fr}}
+.game-card{background:var(--card-bg);border:1px solid var(--border);border-radius:16px;padding:28px 24px;cursor:pointer;transition:transform 0.2s,border-color 0.2s,background 0.2s;position:relative;overflow:hidden;}
+.game-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.card-avanti::before{background:linear-gradient(90deg,var(--purple),var(--pink));}
+.card-eredita::before{background:linear-gradient(90deg,var(--yellow),#ff9900);}
+.card-reazione::before{background:linear-gradient(90deg,var(--cyan),var(--green));}
+.game-card:hover{transform:translateY(-4px);border-color:rgba(255,255,255,0.2);background:rgba(255,255,255,0.07);}
+.game-label{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:3px;color:var(--muted);margin-bottom:8px;}
+.game-name{font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:2px;margin-bottom:4px;}
+.game-subtitle{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:1px;margin-bottom:16px;}
+.card-avanti .game-subtitle{color:var(--pink);}.card-eredita .game-subtitle{color:var(--yellow);}.card-reazione .game-subtitle{color:var(--cyan);}
+.game-desc{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:24px;}
+.btn-enter{display:inline-block;padding:10px 24px;border-radius:8px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;cursor:pointer;border:none;background:var(--yellow);color:#000;transition:all 0.15s;}
+.btn-enter:hover{transform:scale(1.04);}
+.home-footer{margin-top:50px;color:var(--muted);font-size:12px;letter-spacing:1px;}
+
+/* NAV */
+.nav-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:32px;}
+.btn-back{background:none;border:1px solid var(--border);color:var(--muted);padding:8px 16px;border-radius:8px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:2px;cursor:pointer;transition:all 0.15s;}
+.btn-back:hover{border-color:rgba(255,255,255,0.3);color:var(--text);}
+.nav-title{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:3px;color:var(--muted);text-transform:uppercase;}
+
+/* SETUP */
+.setup-container{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.setup-box{background:var(--card-bg);border:1px solid var(--border);border-radius:20px;padding:48px;width:100%;max-width:520px;}
+.setup-title{font-family:'Bebas Neue',sans-serif;font-size:42px;letter-spacing:3px;color:var(--yellow);text-align:center;margin-bottom:8px;}
+.setup-sub{text-align:center;color:var(--muted);font-size:14px;margin-bottom:36px;}
+.form-group{margin-bottom:20px;}
+.form-label{display:block;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;color:var(--muted);margin-bottom:8px;}
+.form-input{width:100%;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:8px;padding:12px 16px;color:var(--text);font-family:'Barlow',sans-serif;font-size:16px;outline:none;transition:border-color 0.15s;}
+.form-input:focus{border-color:rgba(255,255,255,0.3);}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.btn-primary{width:100%;padding:16px;background:var(--yellow);color:#000;border:none;border-radius:10px;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:900;letter-spacing:3px;cursor:pointer;margin-top:8px;transition:all 0.15s;}
+.btn-primary:hover{transform:scale(1.02);box-shadow:0 8px 32px rgba(255,230,0,0.25);}
+.setup-hints{text-align:center;color:var(--muted);font-size:11px;margin-top:20px;}
+
+/* AVANTI */
+.avanti-hud{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:24px;}
+.hud-box{background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:16px 20px;}
+.hud-label{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:2px;color:var(--muted);margin-bottom:4px;}
+.hud-value{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:1px;color:var(--text);}
+.hud-value.yellow{color:var(--yellow);}
+.timer-section{text-align:center;margin-bottom:20px;}
+.timer-label{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:3px;color:var(--muted);margin-bottom:4px;}
+.timer-display{font-family:'Bebas Neue',sans-serif;font-size:80px;letter-spacing:4px;color:var(--text);line-height:1;transition:color 0.3s;}
+.timer-display.urgent{color:var(--pink);animation:pulse 0.5s ease infinite;}
+.wrong-badge{display:inline-block;background:rgba(255,45,120,0.15);border:1px solid var(--pink);color:var(--pink);padding:4px 16px;border-radius:20px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:2px;margin:8px 0 16px;}
+.question-box{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:28px 32px;text-align:center;margin-bottom:20px;}
+.question-text{font-family:'Barlow Condensed',sans-serif;font-size:clamp(18px,2.5vw,26px);font-weight:700;line-height:1.3;}
+.answers-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;}
+.answer-btn{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:20px;cursor:pointer;transition:all 0.15s;text-align:center;}
+.answer-btn:hover{background:rgba(255,255,255,0.1);border-color:rgba(255,255,255,0.25);}
+.answer-label{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:2px;color:var(--muted);margin-bottom:6px;}
+.answer-text{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;letter-spacing:1px;}
+.answer-btn.correct{background:rgba(0,230,118,0.15);border-color:var(--green);}
+.answer-btn.wrong{background:rgba(255,45,120,0.15);border-color:var(--pink);}
+.progress-bar-wrap{background:rgba(255,255,255,0.05);border-radius:8px;height:6px;margin-top:8px;overflow:hidden;}
+.progress-bar{height:100%;background:linear-gradient(90deg,var(--yellow),var(--pink));border-radius:8px;transition:width 0.4s;}
+.progress-info{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+.progress-info-label{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;color:var(--muted);}
+.progress-count{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--yellow);}
+.answer-dots{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px;justify-content:center;}
+.dot{width:20px;height:20px;border-radius:50%;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);}
+.dot.ok{background:var(--green);border-color:var(--green);}
+.dot.current{background:var(--yellow);border-color:var(--yellow);animation:blink 0.8s ease infinite;}
+
+/* EREDITÀ */
+.eredita-header{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;}
+.player-box{background:var(--card-bg);border:1px solid var(--border);border-radius:16px;padding:24px;text-align:center;transition:border-color 0.3s,background 0.3s;}
+.player-box.active{border-color:var(--yellow);background:rgba(255,230,0,0.05);}
+.player-box-name{font-family:'Bebas Neue',sans-serif;font-size:30px;letter-spacing:2px;margin-bottom:4px;}
+.player-box-score{font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--yellow);}
+.player-box-status{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:3px;margin-top:6px;color:var(--muted);}
+.player-box.active .player-box-status{color:var(--yellow);}
+.eredita-def-box{background:var(--card-bg);border:1px solid var(--border);border-radius:16px;padding:24px 32px;text-align:center;margin-bottom:24px;}
+.def-label{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:3px;color:var(--muted);margin-bottom:8px;}
+.def-text{font-family:'Barlow Condensed',sans-serif;font-size:30px;font-weight:700;letter-spacing:1px;}
+.letters-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:24px;min-height:80px;}
+.letter-box{width:54px;height:70px;background:rgba(255,255,255,0.04);border:2px solid rgba(255,255,255,0.1);border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:30px;color:transparent;transition:all 0.3s;}
+.letter-box.revealed{color:var(--text);border-color:rgba(255,255,255,0.3);background:rgba(255,255,255,0.08);animation:revealLetter 0.4s cubic-bezier(0.16,1,0.3,1) both;}
+.letter-box.correct-reveal{color:var(--green);border-color:var(--green);background:rgba(0,230,118,0.1);}
+.eredita-answer-box{display:none;background:rgba(0,0,0,0.85);border:2px solid var(--green);border-radius:20px;padding:28px 48px;text-align:center;margin-bottom:24px;animation:fadeIn 0.3s ease;}
+.eredita-answer-box.visible{display:block;}
+.eredita-answer-label{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:3px;color:var(--green);margin-bottom:8px;}
+.eredita-answer-word{font-family:'Bebas Neue',sans-serif;font-size:56px;letter-spacing:4px;color:var(--green);}
+.eredita-answer-winner{font-family:'Barlow Condensed',sans-serif;font-size:16px;color:var(--muted);margin-top:6px;}
+.eredita-controls{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+.btn-ctrl{padding:12px 24px;border-radius:10px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;cursor:pointer;transition:all 0.15s;border:1px solid;}
+.btn-green{background:rgba(0,230,118,0.15);border-color:rgba(0,230,118,0.4);color:var(--green);}
+.btn-green:hover{background:rgba(0,230,118,0.3);}
+.btn-yellow{background:rgba(255,230,0,0.1);border-color:rgba(255,230,0,0.3);color:var(--yellow);}
+.btn-yellow:hover{background:rgba(255,230,0,0.2);}
+.btn-white{background:rgba(255,255,255,0.06);border-color:var(--border);color:var(--text);}
+.btn-white:hover{background:rgba(255,255,255,0.12);}
+.btn-pink{background:rgba(255,45,120,0.12);border-color:rgba(255,45,120,0.4);color:var(--pink);}
+.btn-pink:hover{background:rgba(255,45,120,0.25);}
+
+/* REAZIONE */
+#screen-reazione-game{background:linear-gradient(135deg,#00120e 0%,#001a10 50%,#0a0614 100%);}
+.reazione-main{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;}
+.reazione-top{display:flex;align-items:center;gap:40px;}
+.score-block{text-align:center;}
+.score-label{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:3px;color:var(--muted);}
+.score-num{font-family:'Bebas Neue',sans-serif;font-size:72px;color:var(--green);line-height:1;}
+.reaz-timer{font-family:'Bebas Neue',sans-serif;font-size:56px;letter-spacing:3px;padding:12px 40px;border-radius:14px;background:rgba(0,0,0,0.4);border:1px solid rgba(255,255,255,0.1);min-width:160px;text-align:center;transition:color 0.3s;}
+.reaz-timer.urgent{color:var(--pink);animation:pulse 0.5s ease infinite;}
+.reaz-timer.stopped{color:var(--yellow);border-color:rgba(255,230,0,0.4);}
+.word-wrap{position:relative;display:inline-block;padding:2px;background:linear-gradient(135deg,rgba(0,229,255,0.4),rgba(0,230,118,0.4));border-radius:22px;}
+.word-inner{background:rgba(0,20,15,0.95);border-radius:20px;padding:28px 64px;font-family:'Bebas Neue',sans-serif;font-size:clamp(48px,8vw,96px);letter-spacing:6px;color:#fff;text-align:center;}
+.reaz-btns{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;align-items:center;}
+.btn-score{padding:14px 28px;border-radius:10px;font-family:'Bebas Neue',sans-serif;font-size:28px;cursor:pointer;transition:all 0.15s;border:1px solid;min-width:80px;text-align:center;}
+.btn-minus{background:rgba(255,45,120,0.15);border-color:rgba(255,45,120,0.4);color:var(--pink);}
+.btn-minus:hover{background:rgba(255,45,120,0.3);}
+.btn-plus{background:rgba(0,230,118,0.15);border-color:rgba(0,230,118,0.4);color:var(--green);}
+.btn-plus:hover{background:rgba(0,230,118,0.3);}
+.btn-stop{padding:14px 28px;border-radius:10px;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:2px;cursor:pointer;transition:all 0.15s;background:rgba(255,230,0,0.12);border:1px solid rgba(255,230,0,0.4);color:var(--yellow);min-width:120px;}
+.btn-stop:hover{background:rgba(255,230,0,0.22);}
+.btn-pass{padding:14px 24px;border-radius:10px;cursor:pointer;transition:all 0.15s;background:rgba(107,33,255,0.2);border:1px solid rgba(107,33,255,0.5);color:#c084fc;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;text-align:center;min-width:90px;}
+.btn-pass:hover{background:rgba(107,33,255,0.35);}
+.btn-pass:disabled{opacity:0.4;cursor:not-allowed;}
+.btn-next{padding:12px 24px;border-radius:10px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;cursor:pointer;transition:all 0.15s;background:rgba(0,229,255,0.1);border:1px solid rgba(0,229,255,0.3);color:var(--cyan);}
+.btn-esatta{padding:12px 24px;border-radius:10px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;cursor:pointer;transition:all 0.15s;background:rgba(0,230,118,0.15);border:1px solid rgba(0,230,118,0.4);color:var(--green);}
+
+/* SIDE SCORE */
+.side-score{position:fixed;top:110px;z-index:9000;width:180px;background:rgba(10,6,20,0.92);border:1px solid var(--border);border-radius:12px;padding:12px;}
+.side-score.left{left:12px;}
+.side-score.right{right:12px;}
+.side-score-title{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:2px;color:var(--muted);margin-bottom:8px;text-transform:uppercase;}
+.side-score-name{width:100%;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:8px;padding:8px 10px;color:var(--text);font-family:'Barlow',sans-serif;font-size:13px;margin-bottom:8px;}
+.side-score-row{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.side-score-btn{width:34px;height:34px;border-radius:8px;border:1px solid var(--border);background:rgba(255,255,255,0.08);color:var(--text);font-family:'Bebas Neue',sans-serif;font-size:24px;cursor:pointer;}
+.side-score-value{font-family:'Bebas Neue',sans-serif;font-size:34px;color:var(--yellow);line-height:1;}
+@media(max-width:1100px){.side-score{display:none;}}
+
+/* RESULT */
+#screen-result{align-items:center;justify-content:center;}
+.result-box{background:var(--card-bg);border:1px solid var(--border);border-radius:24px;padding:64px 80px;text-align:center;max-width:520px;width:100%;}
+.result-esito{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:3px;color:var(--muted);margin-bottom:12px;}
+.result-title{font-family:'Bebas Neue',sans-serif;font-size:72px;letter-spacing:4px;color:var(--yellow);text-shadow:0 0 60px rgba(255,230,0,0.4);animation:titleIn 0.6s both;}
+.result-sub{color:var(--muted);margin:16px 0 40px;font-size:16px;}
+.result-sub strong{color:var(--yellow);font-size:20px;}
+.result-btns{display:flex;gap:12px;justify-content:center;}
+.btn-secondary{padding:12px 24px;background:rgba(255,255,255,0.06);border:1px solid var(--border);color:var(--text);border-radius:10px;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:2px;cursor:pointer;transition:all 0.15s;}
+.btn-secondary:hover{background:rgba(255,255,255,0.12);}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:1000;align-items:center;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal-box{background:#1a1030;border:1px solid var(--border);border-radius:20px;padding:40px;max-width:600px;width:90%;max-height:80vh;overflow-y:auto;}
+.modal-title{font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:2px;color:var(--yellow);margin-bottom:24px;}
+.words-list{display:flex;flex-direction:column;gap:8px;}
+.word-item{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:rgba(255,255,255,0.04);border-radius:10px;border:1px solid var(--border);cursor:pointer;transition:all 0.15s;}
+.word-item:hover{border-color:rgba(255,255,255,0.2);background:rgba(255,255,255,0.08);}
+.word-item-name{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:16px;}
+.word-item-def{font-size:13px;color:var(--muted);}
+.word-item-len{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--muted);}
+.modal-close{margin-top:20px;padding:10px 20px;background:none;border:1px solid var(--border);color:var(--muted);border-radius:8px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:2px;cursor:pointer;}
+</style>
+</head>
+<body>
+<button class="mute-btn" id="muteBtn" onclick="toggleMute()" title="Toggle mute">🔊</button>
+<div class="side-score left">
+  <div class="side-score-title">PUNTEGGIO LATO SINISTRO</div>
+  <input id="side-left-name" class="side-score-name" type="text" value="SQUADRA A">
+  <div class="side-score-row">
+    <button class="side-score-btn" onclick="updateSideScore('left',-1)">−</button>
+    <div id="side-left-score" class="side-score-value">0</div>
+    <button class="side-score-btn" onclick="updateSideScore('left',1)">+</button>
+  </div>
+</div>
+<div class="side-score right">
+  <div class="side-score-title">PUNTEGGIO LATO DESTRO</div>
+  <input id="side-right-name" class="side-score-name" type="text" value="SQUADRA B">
+  <div class="side-score-row">
+    <button class="side-score-btn" onclick="updateSideScore('right',-1)">−</button>
+    <div id="side-right-score" class="side-score-value">0</div>
+    <button class="side-score-btn" onclick="updateSideScore('right',1)">+</button>
+  </div>
+</div>
+
+<!-- HOME -->
+<div id="screen-home" class="screen active">
+  <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+    <div class="home-badge">ON AIR – STUDIO 1</div>
+    <h1 class="home-title">GIOCHI<br>NUOVI</h1>
+    <p class="home-sub">Scegli il gioco. Premi il tasto. Le luci dello studio sono tutte per te.</p>
+    <div class="games-grid">
+      <div class="game-card card-avanti" onclick="goTo('screen-avanti-setup')">
+        <div class="game-label">GIOCO</div>
+        <div class="game-name">FINALE</div>
+        <div class="game-subtitle">AVANTI UN ALTRO</div>
+        <p class="game-desc">Un solo giocatore. Devi completare tutte le domande corrette prima che il timer finisca. Se sbagli, riparti dalla prima parola.</p>
+        <button class="btn-enter">ENTRA IN STUDIO →</button>
+      </div>
+      <div class="game-card card-eredita" onclick="goTo('screen-eredita-setup')">
+        <div class="game-label">GIOCO</div>
+        <div class="game-name">L'EREDITÀ</div>
+        <div class="game-subtitle">CRUCIVERBA</div>
+        <p class="game-desc">Una lettera al secondo. Turni alternati fissi: ogni giocatore ha parole proprie e il proprio tempo personale.</p>
+        <button class="btn-enter">ENTRA IN STUDIO →</button>
+      </div>
+      <div class="game-card card-reazione" onclick="goTo('screen-reazione-setup')">
+        <div class="game-label">GIOCO</div>
+        <div class="game-name">REAZIONE</div>
+        <div class="game-subtitle">A CATENA</div>
+        <p class="game-desc">Un solo giocatore, timer continuo e parole in sequenza. Quando la risposta e` corretta passa subito alla parola successiva.</p>
+        <button class="btn-enter">ENTRA IN STUDIO →</button>
+      </div>
+    </div>
+    <p class="home-footer">Pensato per dirette · 16:9 · OBS Friendly</p>
+  </div>
+</div>
+
+<!-- AVANTI SETUP -->
+<div id="screen-avanti-setup" class="screen">
+  <div class="nav-bar">
+    <button class="btn-back" onclick="goTo('screen-home')">← TORNA ALLA HOME</button>
+    <div class="nav-title">FINALE – AVANTI UN ALTRO</div>
+    <div></div>
+  </div>
+  <div class="setup-container">
+    <div class="setup-box">
+      <div class="setup-title">AVANTI UN ALTRO</div>
+      <p class="setup-sub">Un giocatore. Devi completare tutte le domande corrette prima dello scadere del tempo. Se sbagli, torni alla prima domanda.</p>
+      <div class="form-group">
+        <label class="form-label">GIOCATORE</label>
+        <input class="form-input" id="avanti-p1" type="text" value="GIOCATORE 1">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">MONTEPREMI (€)</label>
+          <input class="form-input" id="avanti-prize" type="number" value="150">
+        </div>
+        <div class="form-group">
+          <label class="form-label">TIMER (SEC)</label>
+          <input class="form-input" id="avanti-time" type="number" value="150">
+        </div>
+      </div>
+      <button class="btn-primary" onclick="startAvanti()">INIZIA IL FINALE →</button>
+      <p class="setup-hints">Scorciatoie: A / 1 = risposta sinistra &nbsp;·&nbsp; B / 2 = risposta destra &nbsp;·&nbsp; Spazio = pausa</p>
+    </div>
+  </div>
+</div>
+
+<!-- AVANTI GAME -->
+<div id="screen-avanti-game" class="screen" style="background:linear-gradient(135deg,#0a0614 0%,#150825 50%,#0e0a1e 100%)">
+  <div class="nav-bar">
+    <button class="btn-back" onclick="goTo('screen-home')">← TORNA ALLA HOME</button>
+    <div class="nav-title">FINALE – AVANTI UN ALTRO</div>
+    <button id="avanti-pause-btn" style="padding:8px 16px;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:8px;color:var(--muted);font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;cursor:pointer;" onclick="togglePause()">⏸ PAUSA</button>
+  </div>
+  <div class="avanti-hud">
+    <div class="hud-box">
+      <div class="hud-label">GIOCATORE</div>
+      <div class="hud-value" id="avanti-cur-player">-</div>
+    </div>
+    <div class="hud-box" style="text-align:center;">
+      <div class="hud-label">MONTEPREMI</div>
+      <div class="hud-value yellow" id="avanti-cur-prize">-</div>
+    </div>
+    <div class="hud-box" style="text-align:right;">
+      <div class="hud-label">OBIETTIVO</div>
+      <div class="hud-value" id="avanti-turn-display">COMPLETA TUTTO</div>
+    </div>
+  </div>
+  <div class="timer-section">
+    <div class="timer-label">TEMPO RIMASTO</div>
+    <div class="timer-display" id="avanti-timer">02:30</div>
+    <div class="wrong-badge">SCEGLI LA RISPOSTA SBAGLIATA (SE PRENDI LA GIUSTA RIPARTI)</div>
+  </div>
+  <div class="question-box">
+    <div class="question-text" id="avanti-question">-</div>
+  </div>
+  <div class="answers-row">
+    <div class="answer-btn" id="avanti-ans-a" onclick="selectAnswer('A')">
+      <div class="answer-label">A</div>
+      <div class="answer-text" id="avanti-text-a">-</div>
+    </div>
+    <div class="answer-btn" id="avanti-ans-b" onclick="selectAnswer('B')">
+      <div class="answer-label">B</div>
+      <div class="answer-text" id="avanti-text-b">-</div>
+    </div>
+  </div>
+  <div>
+    <div class="progress-info">
+      <div class="progress-info-label">DOMANDE COMPLETATE</div>
+      <div class="progress-count" id="avanti-prog-num">0 / 0</div>
+    </div>
+    <div class="progress-bar-wrap">
+      <div class="progress-bar" id="avanti-prog-bar" style="width:0%"></div>
+    </div>
+    <div class="answer-dots" id="avanti-dots"></div>
+  </div>
+</div>
+
+<!-- EREDITÀ SETUP -->
+<div id="screen-eredita-setup" class="screen">
+  <div class="nav-bar">
+    <button class="btn-back" onclick="goTo('screen-home')">← TORNA ALLA HOME</button>
+    <div class="nav-title">L'EREDITÀ</div>
+    <div></div>
+  </div>
+  <div class="setup-container">
+    <div class="setup-box">
+      <div class="setup-title">L'EREDITÀ</div>
+      <p class="setup-sub">Inizia sempre Giocatore 1. Una lettera ogni secondo. Ogni giocatore ha parole proprie e tempo personale.</p>
+      <div class="form-group">
+        <label class="form-label">GIOCATORE 1</label>
+        <input class="form-input" id="eredita-p1" type="text" value="GIOCATORE 1">
+      </div>
+      <div class="form-group">
+        <label class="form-label">GIOCATORE 2</label>
+        <input class="form-input" id="eredita-p2" type="text" value="GIOCATORE 2">
+      </div>
+      <div class="form-group">
+        <label class="form-label">MONTEPREMI (€)</label>
+        <input class="form-input" id="eredita-prize" type="number" value="150">
+      </div>
+      <button class="btn-primary" onclick="startEredita()">INIZIA →</button>
+    </div>
+  </div>
+</div>
+
+<!-- EREDITÀ GAME -->
+<div id="screen-eredita-game" class="screen" style="background:linear-gradient(135deg,#0a0614 0%,#1a1000 100%)">
+  <div class="nav-bar">
+    <button class="btn-back" onclick="stopEredita();goTo('screen-home')">← TORNA ALLA HOME</button>
+    <div class="nav-title">L'EREDITÀ – CRUCIVERBA</div>
+    <div></div>
+  </div>
+  <div class="eredita-header">
+    <div class="player-box" id="eredita-box-p1">
+      <div class="player-box-name" id="eredita-name-p1">P1</div>
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:2px;color:var(--muted);margin-bottom:4px;">TEMPO</div>
+      <div class="player-box-score" id="eredita-score-p1">0</div>
+      <div class="player-box-status" id="eredita-status-p1">IN ATTESA</div>
+    </div>
+    <div class="player-box" id="eredita-box-p2">
+      <div class="player-box-name" id="eredita-name-p2">P2</div>
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:2px;color:var(--muted);margin-bottom:4px;">TEMPO</div>
+      <div class="player-box-score" id="eredita-score-p2">0</div>
+      <div class="player-box-status" id="eredita-status-p2">IN ATTESA</div>
+    </div>
+  </div>
+  <div class="eredita-def-box">
+    <div class="def-label" id="eredita-turn-label">DEFINIZIONE</div>
+    <div class="def-text" id="eredita-def">-</div>
+  </div>
+  <div class="letters-row" id="eredita-letters"></div>
+  <div class="eredita-answer-box" id="eredita-answer-box">
+    <div class="eredita-answer-label">✓ RISPOSTA CORRETTA</div>
+    <div class="eredita-answer-word" id="eredita-answer-word">-</div>
+    <div class="eredita-answer-winner" id="eredita-answer-winner">-</div>
+  </div>
+  <p class="setup-hints">Controllo esterno aperto in una pagina separata: li' trovi parola e pulsante "Prossimo giocatore".</p>
+</div>
+
+<!-- REAZIONE SETUP -->
+<div id="screen-reazione-setup" class="screen">
+  <div class="nav-bar">
+    <button class="btn-back" onclick="goTo('screen-home')">← TORNA ALLA HOME</button>
+    <div class="nav-title">REAZIONE A CATENA</div>
+    <div></div>
+  </div>
+  <div class="setup-container">
+    <div class="setup-box">
+      <div class="setup-title">REAZIONE A CATENA</div>
+      <p class="setup-sub">Un solo nome, timer continuo e parole in sequenza.</p>
+      <div class="form-group">
+        <label class="form-label">NOME</label>
+        <input class="form-input" id="reazione-player" type="text" value="GIOCATORE 1">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">TIMER TOTALE (SEC)</label>
+          <input class="form-input" id="reazione-time" type="number" value="60">
+        </div>
+        <div class="form-group">
+          <label class="form-label">PASSI DISPONIBILI</label>
+          <input class="form-input" id="reazione-passes" type="number" value="3">
+        </div>
+      </div>
+      <button class="btn-primary" onclick="startReazione()">INIZIA →</button>
+    </div>
+  </div>
+</div>
+
+<!-- REAZIONE GAME -->
+<div id="screen-reazione-game" class="screen">
+  <div class="nav-bar">
+    <button class="btn-back" onclick="stopReazione();goTo('screen-home')">← TORNA ALLA HOME</button>
+    <div class="nav-title">REAZIONE A CATENA</div>
+    <div style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;color:var(--muted);" id="reazione-round-label">GIOCATORE 1</div>
+  </div>
+  <div class="reazione-main">
+    <div class="reazione-top">
+      <div class="score-block">
+        <div class="score-label">PUNTI TOTALI</div>
+        <div class="score-num" id="reazione-score">0</div>
+      </div>
+      <div class="reaz-timer" id="reazione-timer-display">:60</div>
+    </div>
+    <div class="word-wrap">
+      <div class="word-inner" id="reazione-word">—</div>
+    </div>
+    <div class="reaz-btns">
+      <button class="btn-score btn-minus" onclick="reazioneScore(-1)" title="Rimuovi 1 punto">−1</button>
+      <button class="btn-stop" id="reazione-stop-btn" onclick="reazioneToggleStop()">⏸ STOP</button>
+      <button class="btn-pass" id="reazione-pass-btn" onclick="reazionePass()">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;" id="reazione-pass-count">3</div>
+        <div style="font-size:10px;letter-spacing:2px;margin-top:2px;">PASSI</div>
+      </button>
+      <button class="btn-score btn-plus" onclick="reazioneScore(1)" title="Aggiungi 1 punto">+1</button>
+    </div>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;">
+      <button class="btn-esatta" onclick="reazioneCorrect()">✓ ESATTA! (+1 pt)</button>
+      <button class="btn-next" onclick="reazioneNextWord()">⟶ PROSSIMA PAROLA</button>
+    </div>
+  </div>
+</div>
+
+<!-- RESULT -->
+<div id="screen-result" class="screen">
+  <div style="flex:1;display:flex;align-items:center;justify-content:center;">
+    <div class="result-box">
+      <div class="result-esito">ESITO</div>
+      <div class="result-title" id="result-title">HA VINTO!</div>
+      <p class="result-sub" id="result-sub">-</p>
+      <div class="result-btns">
+        <button class="btn-primary" style="width:auto;padding:12px 28px;" onclick="goTo('screen-home')">↺ NUOVA PARTITA</button>
+        <button class="btn-secondary" onclick="goTo('screen-home')">⌂ HOME</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PANEL PAROLE MODAL -->
+<div class="modal-overlay" id="modal-eredita">
+  <div class="modal-box">
+    <div class="modal-title">PANEL PAROLE</div>
+    <p style="color:var(--muted);font-size:13px;margin-bottom:20px;">Clicca su una parola per caricarla nel gioco.</p>
+    <div class="words-list" id="eredita-words-list"></div>
+    <button class="modal-close" onclick="document.getElementById('modal-eredita').classList.remove('open')">CHIUDI</button>
+  </div>
+</div>
+
+<script>
+// ======================== NAVIGATION ========================
+function goTo(id){
+  if(id!=='screen-avanti-game' && avantiState && avantiState.timerInterval) clearInterval(avantiState.timerInterval);
+  if(id!=='screen-eredita-game') stopEredita();
+  if(id!=='screen-reazione-game') stopReazione();
+  document.querySelectorAll('.screen').forEach(s=>{s.classList.remove('active');s.style.display='none';});
+  const el=document.getElementById(id);
+  el.classList.add('active');
+  el.style.display='flex';
+  updateSidePanelsVisibility(id);
+}
+document.querySelectorAll('.screen').forEach(s=>{if(!s.classList.contains('active'))s.style.display='none';});
+
+function updateSidePanelsVisibility(activeId){
+  const visible=activeId==='screen-home';
+  document.querySelectorAll('.side-score').forEach(el=>{
+    el.style.display=visible?'block':'none';
+  });
+}
+updateSidePanelsVisibility('screen-home');
+
+function shuffleArray(arr){
+  const a=[...arr];
+  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+  return a;
+}
+
+const sideScores={left:0,right:0};
+function updateSideScore(side,delta){
+  sideScores[side]=Math.max(0,sideScores[side]+delta);
+  document.getElementById('side-'+side+'-score').textContent=sideScores[side];
+}
+
+// ======================== AVANTI UN ALTRO ========================
+const AVANTI_ROUND_QUESTIONS=30;
+const ALL_Q=[
+  {q:"Di che colore è il cielo sereno di giorno?",a:"BLU",b:"VERDE",correct:"A"},
+  {q:"Quante zampe ha un cane?",a:"4",b:"6",correct:"A"},
+  {q:"La capitale d'Italia è…?",a:"ROMA",b:"MILANO",correct:"A"},
+  {q:"Chi inventò la lampadina commerciale?",a:"EDISON",b:"TESLA",correct:"A"},
+  {q:"I pinguini sanno volare?",a:"NO",b:"SÌ",correct:"A"},
+  {q:"Il Tevere attraversa quale città?",a:"ROMA",b:"FIRENZE",correct:"A"},
+  {q:"Il pianeta più grande del sistema solare è…?",a:"GIOVE",b:"SATURNO",correct:"A"},
+  {q:"Quanti minuti ha un'ora?",a:"60",b:"100",correct:"A"},
+  {q:"Il simbolo chimico dell'oro è…?",a:"AU",b:"GO",correct:"A"},
+  {q:"Chi ha dipinto la Gioconda?",a:"DA VINCI",b:"MICHELANGELO",correct:"A"},
+  {q:"Il Nilo è un…?",a:"FIUME",b:"LAGO",correct:"A"},
+  {q:"L'acqua bolle a…?",a:"100°C",b:"90°C",correct:"A"},
+  {q:"Quanti lati ha un triangolo?",a:"3",b:"4",correct:"A"},
+  {q:"La Luna è…?",a:"UN SATELLITE",b:"UN PIANETA",correct:"A"},
+  {q:"L'elemento più abbondante nell'aria è…?",a:"AZOTO",b:"OSSIGENO",correct:"A"},
+  {q:"La bandiera italiana ha quanti colori?",a:"3",b:"4",correct:"A"},
+  {q:"Il cuore umano ha quante camere?",a:"4",b:"2",correct:"A"},
+  {q:"Chi scrisse la Divina Commedia?",a:"DANTE",b:"PETRARCA",correct:"A"},
+  {q:"L'Everest si trova in…?",a:"ASIA",b:"AFRICA",correct:"A"},
+  {q:"Un chilogrammo quanti grammi sono?",a:"1000",b:"100",correct:"A"},
+  {q:"Il re della giungla è il…?",a:"LEONE",b:"ELEFANTE",correct:"A"},
+  {q:"La velocità della luce è circa…?",a:"300.000 KM/S",b:"150.000 KM/S",correct:"A"},
+  {q:"Quanti denti ha un adulto?",a:"32",b:"28",correct:"A"},
+  {q:"La Francia confina con l'Italia?",a:"SÌ",b:"NO",correct:"A"},
+  {q:"Il diamante è composto da…?",a:"CARBONIO",b:"SILICIO",correct:"A"},
+  {q:"Chi compose la Quinta Sinfonia?",a:"BEETHOVEN",b:"MOZART",correct:"A"},
+  {q:"Il continente più grande è…?",a:"ASIA",b:"AFRICA",correct:"A"},
+  {q:"Il mar Mediterraneo è…?",a:"SALATO",b:"DOLCE",correct:"A"},
+  {q:"La fotosintesi avviene nelle…?",a:"FOGLIE",b:"RADICI",correct:"A"},
+  {q:"Quante ore ha un giorno?",a:"24",b:"12",correct:"A"},
+  {q:"Il simbolo chimico dell'ossigeno è…?",a:"O",b:"OS",correct:"A"},
+  {q:"Chi dipinse il Giudizio Universale nella Sistina?",a:"MICHELANGELO",b:"RAFFAELLO",correct:"A"},
+  {q:"La Spagna si affaccia sull'Atlantico?",a:"SÌ",b:"NO",correct:"A"},
+  {q:"Quante settimane ha un anno?",a:"52",b:"48",correct:"A"},
+  {q:"Il DNA ha la forma di…?",a:"DOPPIA ELICA",b:"CERCHIO",correct:"A"},
+  {q:"La Muraglia Cinese è in…?",a:"CINA",b:"COREA",correct:"A"},
+  {q:"Il pipistrello è un…?",a:"MAMMIFERO",b:"RETTILE",correct:"A"},
+  {q:"La capitale della Germania è…?",a:"BERLINO",b:"MONACO",correct:"A"},
+  {q:"Quanti pianeti ha il sistema solare?",a:"8",b:"9",correct:"A"},
+  {q:"Il Colosseo si trova a…?",a:"ROMA",b:"NAPOLI",correct:"A"},
+  {q:"L'acqua è composta da…?",a:"H₂O",b:"H₂O₂",correct:"A"},
+  {q:"Il Brasile parla…?",a:"PORTOGHESE",b:"SPAGNOLO",correct:"A"},
+  {q:"Il Monte Bianco si trova tra Italia e…?",a:"FRANCIA",b:"SVIZZERA",correct:"A"},
+  {q:"La pizza Margherita è nata a…?",a:"NAPOLI",b:"ROMA",correct:"A"},
+  {q:"Quanti secondi ha un minuto?",a:"60",b:"100",correct:"A"},
+  {q:"Il Sahara è un deserto di…?",a:"SABBIA",b:"GHIACCIO",correct:"A"},
+  {q:"La balena è un…?",a:"MAMMIFERO",b:"PESCE",correct:"A"},
+  {q:"Cristoforo Colombo era di origine…?",a:"GENOVESE",b:"VENEZIANA",correct:"A"},
+  {q:"Il Sole è una…?",a:"STELLA",b:"PIANETA",correct:"A"},
+  {q:"Quante corde ha una chitarra standard?",a:"6",b:"4",correct:"A"},
+  {q:"Chi ha scritto Romeo e Giulietta?",a:"SHAKESPEARE",b:"TOLSTOJ",correct:"A"},
+  {q:"L'orso polare vive al…?",a:"POLO NORD",b:"POLO SUD",correct:"A"},
+  {q:"Il Nilo si trova in…?",a:"AFRICA",b:"ASIA",correct:"A"},
+  {q:"Napoleone era di origine…?",a:"CÒRSA",b:"FRANCESE",correct:"A"},
+  {q:"Il canguro è originario di…?",a:"AUSTRALIA",b:"NUOVA ZELANDA",correct:"A"},
+  {q:"La giraffa è l'animale più…?",a:"ALTO",b:"PESANTE",correct:"A"},
+  {q:"Quante stagioni ha un anno?",a:"4",b:"3",correct:"A"},
+  {q:"Il cuore di un polpo è quante?",a:"3",b:"1",correct:"A"},
+  {q:"Il suono viaggia più veloce della luce?",a:"NO",b:"SÌ",correct:"A"},
+  {q:"Il Tokyo è la capitale di…?",a:"GIAPPONE",b:"CINA",correct:"A"},
+  {q:"La lingua più parlata al mondo è…?",a:"MANDARINO",b:"INGLESE",correct:"A"},
+  {q:"Il simbolo del sodio è…?",a:"NA",b:"SO",correct:"A"},
+  {q:"Venezia è costruita su…?",a:"ISOLE",b:"COLLINE",correct:"A"},
+  {q:"Il cubo ha quante facce?",a:"6",b:"8",correct:"A"},
+  {q:"Il gas vitale per la respirazione è…?",a:"OSSIGENO",b:"ELIO",correct:"A"},
+  {q:"Il deserto del Gobi si trova in Asia?",a:"SÌ",b:"NO",correct:"A"},
+  {q:"La tastiera del pianoforte alterna tasti bianchi e…?",a:"NERI",b:"ROSSI",correct:"A"},
+  {q:"L'Antartide è il continente più freddo?",a:"SÌ",b:"NO",correct:"A"},
+  {q:"Il quadrato ha lati tutti…?",a:"UGUALI",b:"DIVERSI",correct:"A"},
+  {q:"Il fiume Arno passa da Firenze?",a:"SÌ",b:"NO",correct:"A"},
+  {q:"Il metallo liquido a temperatura ambiente è…?",a:"MERCURIO",b:"RAME",correct:"A"},
+  {q:"La capitale del Portogallo è…?",a:"LISBONA",b:"PORTO",correct:"A"},
+  {q:"Il koala vive principalmente in Australia?",a:"SÌ",b:"NO",correct:"A"},
+  {q:"La Terra compie un giro intorno al Sole in…?",a:"1 ANNO",b:"1 MESE",correct:"A"},
+  {q:"La pelle umana è l'organo più grande?",a:"SÌ",b:"NO",correct:"A"},
+  {q:"Il triangolo rettangolo ha un angolo di…?",a:"90°",b:"60°",correct:"A"},
+];
+
+function buildAvantiGeneralExtras(){
+  const out=[];
+  const dateFacts=[
+    ["e` stata proclamata l'Unita d'Italia","1861"],
+    ["e` stato firmato il Trattato di Roma","1957"],
+    ["e` nato Dante Alighieri","1265"],
+    ["e` morto Leonardo da Vinci","1519"],
+    ["e` iniziata la Prima guerra mondiale","1914"],
+    ["e` iniziata la Seconda guerra mondiale","1939"],
+    ["e` caduto il Muro di Berlino","1989"],
+    ["l'Italia ha vinto i Mondiali di calcio in Spagna","1982"],
+    ["l'Italia ha vinto i Mondiali di calcio in Germania","2006"],
+    ["e` entrato in vigore l'euro in Italia","2002"],
+    ["Cristoforo Colombo e` arrivato in America","1492"],
+    ["Giuseppe Garibaldi e` nato","1807"],
+    ["Napoleone Bonaparte e` nato","1769"],
+    ["Giuseppe Verdi e` nato","1813"],
+    ["la Costituzione italiana e` entrata in vigore","1948"],
+    ["e` stata inaugurata Expo Milano","2015"],
+    ["e` nato Galileo Galilei","1564"],
+    ["e` nato Michelangelo","1475"],
+    ["e` iniziata la Rivoluzione francese","1789"],
+    ["e` stato scoperto il pianeta Nettuno","1846"]
+  ];
+  dateFacts.forEach((f,i)=>{
+    out.push({q:"In che anno "+f[0]+"?",a:f[1],b:dateFacts[(i+3)%dateFacts.length][1],correct:"A"});
+  });
+
+  const artFacts=[
+    ["Chi ha dipinto la Cappella Sistina?","MICHELANGELO","RAFFAELLO"],
+    ["Chi ha dipinto La Nascita di Venere?","BOTTICELLI","CARAVAGGIO"],
+    ["Chi ha dipinto La Notte Stellata?","VAN GOGH","MONET"],
+    ["Chi ha dipinto Guernica?","PICASSO","DALI"],
+    ["Chi ha scolpito il David a Firenze?","MICHELANGELO","BERNINI"],
+    ["Chi e` l'autore de I Promessi Sposi?","MANZONI","LEOPARDI"],
+    ["Chi ha scritto La Divina Commedia?","DANTE","BOCCACCIO"],
+    ["Chi ha composto Le Quattro Stagioni?","VIVALDI","PAGANINI"],
+    ["Chi ha composto il Nabucco?","VERDI","PUCCINI"],
+    ["Chi ha scritto Il Nome della Rosa?","UMBERTO ECO","CALVINO"],
+    ["Chi ha scritto Pinocchio?","COLLODI","DE AMICIS"],
+    ["Chi ha scritto Il Gattopardo?","TOMASI DI LAMPEDUSA","SVEVO"],
+    ["Chi ha dipinto Le ninfee?","MONET","RENOIR"],
+    ["Chi ha dipinto L'Urlo?","MUNCH","KANDINSKI"],
+    ["Chi ha dipinto La persistenza della memoria?","DALI","MAGRITTE"],
+    ["Chi ha scolpito Apollo e Dafne?","BERNINI","DONATELLO"],
+    ["Chi ha scritto Se questo e` un uomo?","PRIMO LEVI","MORAVIA"],
+    ["Chi ha scritto Il fu Mattia Pascal?","PIRANDELLO","D'ANNUNZIO"],
+    ["Chi ha composto la Turandot?","PUCCINI","ROSSINI"],
+    ["Chi ha composto il Barbiere di Siviglia?","ROSSINI","VERDI"]
+  ];
+  artFacts.forEach(f=>out.push({q:f[0],a:f[1],b:f[2],correct:"A"}));
+
+  const geoFacts=[
+    ["Qual e` la capitale del Canada?","OTTAWA","TORONTO"],
+    ["Qual e` la capitale dell'Australia?","CANBERRA","SYDNEY"],
+    ["Qual e` la capitale della Svizzera?","BERNA","ZURIGO"],
+    ["Qual e` la capitale del Brasile?","BRASILIA","RIO DE JANEIRO"],
+    ["Qual e` la capitale del Marocco?","RABAT","CASABLANCA"],
+    ["Qual e` la capitale della Turchia?","ANKARA","ISTANBUL"],
+    ["Qual e` la capitale del Belgio?","BRUXELLES","ANVERSA"],
+    ["Qual e` la capitale della Norvegia?","OSLO","BERGEN"],
+    ["Qual e` il fiume piu` lungo d'Italia?","PO","TEVERE"],
+    ["Qual e` la montagna piu` alta d'Italia?","MONTE BIANCO","MONTE ROSA"],
+    ["Qual e` la regione italiana con capoluogo Bari?","PUGLIA","BASILICATA"],
+    ["Qual e` la regione italiana con capoluogo Cagliari?","SARDEGNA","SICILIA"],
+    ["Qual e` la regione italiana con capoluogo Torino?","PIEMONTE","LOMBARDIA"],
+    ["In quale continente si trova il Kenya?","AFRICA","ASIA"],
+    ["In quale continente si trova il Peru`?","AMERICA DEL SUD","AFRICA"],
+    ["Qual e` l'oceano piu` vasto?","PACIFICO","ATLANTICO"],
+    ["Qual e` il deserto piu` esteso?","SAHARA","GOBI"],
+    ["Quale paese ha forma di stivale?","ITALIA","GRECIA"],
+    ["In quale mare si trova l'isola di Creta?","MEDITERRANEO","NERO"],
+    ["Qual e` la capitale dell'Islanda?","REYKJAVIK","AKUREYRI"]
+  ];
+  geoFacts.forEach(f=>out.push({q:f[0],a:f[1],b:f[2],correct:"A"}));
+
+  const scienceFacts=[
+    ["Qual e` il pianeta piu` vicino al Sole?","MERCURIO","VENERE"],
+    ["Qual e` il pianeta piu` grande?","GIOVE","SATURNO"],
+    ["Come si chiama la nostra galassia?","VIA LATTEA","ANDROMEDA"],
+    ["Quale stella e` al centro del Sistema Solare?","SOLE","SIRIO"],
+    ["Qual e` il simbolo chimico del ferro?","FE","FR"],
+    ["Qual e` il simbolo chimico dell'argento?","AG","AR"],
+    ["Qual e` il simbolo chimico del sodio?","NA","SO"],
+    ["Qual e` il simbolo chimico del potassio?","K","P"],
+    ["A quanti gradi congela l'acqua?","0°C","-10°C"],
+    ["A quanti gradi bolle l'acqua a livello del mare?","100°C","90°C"],
+    ["La velocita` della luce e` circa?","300000 KM/S","30000 KM/S"],
+    ["Il suono viaggia piu` veloce della luce?","NO","SI"],
+    ["Qual e` l'unita` di misura della corrente elettrica?","AMPERE","VOLT"],
+    ["Qual e` l'unita` di misura della forza?","NEWTON","JOULE"],
+    ["Quale gas assorbiamo per respirare?","OSSIGENO","AZOTO"],
+    ["Quale organo pompa il sangue?","CUORE","FEGATO"],
+    ["Quanti cromosomi ha normalmente l'uomo?","46","48"],
+    ["Il DNA ha forma di?","DOPPIA ELICA","ANELLO PIENO"],
+    ["Quale scienziato elaboro` la relativita`?","EINSTEIN","NEWTON"],
+    ["Quale fisico formulo` la legge di gravita` universale?","NEWTON","TESLA"]
+  ];
+  scienceFacts.forEach(f=>out.push({q:f[0],a:f[1],b:f[2],correct:"A"}));
+
+  const techFacts=[
+    ["Chi ha fondato Microsoft con Bill Gates?","PAUL ALLEN","STEVE JOBS"],
+    ["Chi ha fondato Apple con Steve Wozniak?","STEVE JOBS","ELON MUSK"],
+    ["Che cosa indica CPU?","CENTRAL PROCESSING UNIT","COMPUTER POWER UNIT"],
+    ["Che cosa indica RAM?","RANDOM ACCESS MEMORY","READ ACCESS MODULE"],
+    ["Quale linguaggio gira nei browser web?","JAVASCRIPT","PYTHON"],
+    ["Quale protocollo si usa per pagine web sicure?","HTTPS","FTP"],
+    ["Che cosa indica SSD?","SOLID STATE DRIVE","SYSTEM STORAGE DISK"],
+    ["Quale azienda produce Android?","GOOGLE","MICROSOFT"],
+    ["Quale sistema usa iPhone?","IOS","ANDROID"],
+    ["Quale estensione identifica una pagina web?","HTML","PNG"],
+    ["Quale tasto copia negli shortcut Windows?","CTRL+C","CTRL+V"],
+    ["Quale tasto incolla negli shortcut Windows?","CTRL+V","CTRL+X"],
+    ["Quale piattaforma e` famosa per repository di codice?","GITHUB","NETFLIX"],
+    ["Quale motore cerca soprattutto contenuti video?","YOUTUBE","SPOTIFY"],
+    ["Quale formato e` tipico per documenti portabili?","PDF","MP3"],
+    ["Quale formato e` tipico per audio compresso?","MP3","DOCX"],
+    ["Quale tecnologia connette dispositivi a corto raggio?","BLUETOOTH","LTE"],
+    ["Quale servizio e` di streaming musicale?","SPOTIFY","DROPBOX"],
+    ["Quale azienda sviluppa Windows?","MICROSOFT","ADOBE"],
+    ["Quale social e` basato su video brevi verticali?","TIKTOK","LINKEDIN"]
+  ];
+  techFacts.forEach(f=>out.push({q:f[0],a:f[1],b:f[2],correct:"A"}));
+
+  const itPopFacts=[
+    ["Chi e` noto come youtuber di tecnologia italiano?","MARCELLINO TECH","KHAABY LAME"],
+    ["Chi e` il creator italiano piu` seguito su TikTok?","KHAABY LAME","FAVIJ"],
+    ["Chi e` conosciuto come gamer/youtuber storico italiano?","FAVIJ","MARRACASH"],
+    ["Quale cantante e` soprannominato Il Blasco?","VASCO ROSSI","LIGABUE"],
+    ["Chi ha vinto Sanremo 2021?","MANESKIN","ULTIMO"],
+    ["Chi ha vinto Sanremo 2022?","MAHMOOD E BLANCO","LA RAPPRESENTANTE DI LISTA"],
+    ["Chi e` un divulgatore scientifico italiano TV?","PIERO ANGELA","BRUNO VESPA"],
+    ["Quale citta` ospita il Festival di Sanremo?","SANREMO","IMPERIA"],
+    ["Quale programma conduceva Mike Bongiorno?","RISCHIATUTTO","PORTA A PORTA"],
+    ["Quale duo comico e` formato da Ficarra e Picone?","SICILIANO","ROMANO"],
+    ["Chi e` un famoso divulgatore di storia italiana online?","ALESSANDRO BARBERO","PAOLO BONOLIS"],
+    ["Quale conduttore e` legato ad Avanti un Altro?","PAOLO BONOLIS","CARLO CONTI"],
+    ["Quale conduttore e` legato a L'Eredita`?","MARCO LIORNI","AMADEUS"],
+    ["Quale conduttore e` legato a Reazione a Catena?","PINO INSEGNO","GERRY SCOTTI"],
+    ["Quale squadra ha vinto piu` scudetti in Italia?","JUVENTUS","ROMA"],
+    ["Quale citta` e` sede della FIAT storica?","TORINO","BOLOGNA"],
+    ["Quale marchio italiano produce supercar a Maranello?","FERRARI","MASERATI"],
+    ["Quale stilista e` legato al marchio Armani?","GIORGIO ARMANI","VALENTINO ROSSI"],
+    ["Quale citta` e` capitale italiana della moda?","MILANO","GENOVA"],
+    ["Quale attore italiano ha vinto l'Oscar per La vita e` bella?","ROBERTO BENIGNI","NANNI MORETTI"]
+  ];
+  itPopFacts.forEach(f=>out.push({q:f[0],a:f[1],b:f[2],correct:"A"}));
+
+  return out;
+}
+
+const AVANTI_POOL=[...ALL_Q,...buildAvantiGeneralExtras()];
+
+function prepareQuestions(list){
+  return shuffleArray(list).slice(0,AVANTI_ROUND_QUESTIONS).map(q=>{
+    if(Math.random()<0.5){
+      return {q:q.q,a:q.b,b:q.a,correct:q.correct==='A'?'B':'A'};
+    }
+    return {...q};
+  });
+}
+
+let avantiState={};
+
+function startAvanti(){
+  const p1=document.getElementById('avanti-p1').value||'P1';
+  const prize=parseInt(document.getElementById('avanti-prize').value)||150;
+  const time=parseInt(document.getElementById('avanti-time').value)||150;
+  const questions=prepareQuestions(AVANTI_POOL);
+  avantiState={
+    player:p1,
+    prize,totalTime:time,timeLeft:time,
+    timerInterval:null,paused:false,
+    answered:0,questions,currentQ:0,totalQuestions:questions.length
+  };
+  goTo('screen-avanti-game');
+  renderAvantiQuestion();
+  updateAvantiHUD();
+  buildDots();
+  startAvantiTimer();
+}
+
+function renderAvantiQuestion(){
+  const q=avantiState.questions[avantiState.currentQ];
+  if(!q) return;
+  document.getElementById('avanti-question').textContent=q.q;
+  document.getElementById('avanti-text-a').textContent=q.a;
+  document.getElementById('avanti-text-b').textContent=q.b;
+  document.getElementById('avanti-ans-a').className='answer-btn';
+  document.getElementById('avanti-ans-b').className='answer-btn';
+}
+
+function updateAvantiHUD(){
+  const s=avantiState;
+  document.getElementById('avanti-cur-player').textContent=s.player;
+  document.getElementById('avanti-cur-prize').textContent=s.prize+' €';
+  document.getElementById('avanti-turn-display').textContent='COMPLETA TUTTO';
+  document.getElementById('avanti-prog-num').textContent=s.answered+' / '+s.totalQuestions;
+  document.getElementById('avanti-prog-bar').style.width=(s.answered/s.totalQuestions*100)+'%';
+}
+
+function buildDots(){
+  const c=document.getElementById('avanti-dots');
+  c.innerHTML='';
+  for(let i=0;i<avantiState.totalQuestions;i++){
+    const d=document.createElement('div');
+    d.className='dot'+(i===avantiState.answered?' current':'');
+    d.id='dot-'+i;
+    c.appendChild(d);
+  }
+}
+
+function selectAnswer(choice){
+  if(avantiState.paused) return;
+  const q=avantiState.questions[avantiState.currentQ];
+  if(!q) return;
+  const pickedWrong=(choice!==q.correct);
+  const btnA=document.getElementById('avanti-ans-a');
+  const btnB=document.getElementById('avanti-ans-b');
+  if(pickedWrong){
+    btnA.className='answer-btn'+(choice==='A'?' correct':'');
+    btnB.className='answer-btn'+(choice==='B'?' correct':'');
+    const dot=document.getElementById('dot-'+avantiState.answered);
+    if(dot){dot.classList.remove('current');dot.classList.add('ok');}
+    avantiState.answered++;
+    avantiState.currentQ++;
+    if(avantiState.answered>=avantiState.totalQuestions){
+      clearInterval(avantiState.timerInterval);
+      showResult('HA VINTO!',avantiState.player+' ha vinto il montepremi di <strong>'+avantiState.prize+' €</strong>.');
+      return;
+    }
+    setTimeout(()=>{
+      renderAvantiQuestion();
+      updateAvantiHUD();
+      const nd=document.getElementById('dot-'+avantiState.answered);
+      if(nd) nd.classList.add('current');
+    },600);
+  } else {
+    btnA.className='answer-btn'+(choice==='A'?' wrong':'');
+    btnB.className='answer-btn'+(choice==='B'?' wrong':'');
+    setTimeout(()=>{
+      avantiState.answered=0;
+      avantiState.currentQ=0;
+      updateAvantiHUD();
+      buildDots();
+      renderAvantiQuestion();
+    },700);
+  }
+}
+
+function startAvantiTimer(){
+  clearInterval(avantiState.timerInterval);
+  avantiState.timerInterval=setInterval(()=>{
+    if(avantiState.paused) return;
+    avantiState.timeLeft--;
+    updateTimerDisplay();
+    if(avantiState.timeLeft<=0){
+      clearInterval(avantiState.timerInterval);
+      showResult('TEMPO SCADUTO!',avantiState.player+' ha perso.');
+    }
+  },1000);
+  updateTimerDisplay();
+}
+
+function updateTimerDisplay(){
+  const t=avantiState.timeLeft;
+  const m=String(Math.floor(t/60)).padStart(2,'0');
+  const s=String(t%60).padStart(2,'0');
+  const el=document.getElementById('avanti-timer');
+  el.textContent=m+':'+s;
+  el.className='timer-display'+(t<=30?' urgent':'');
+}
+
+function togglePause(){
+  avantiState.paused=!avantiState.paused;
+  document.getElementById('avanti-pause-btn').textContent=avantiState.paused?'▶ RIPRENDI':'⏸ PAUSA';
+}
+
+document.addEventListener('keydown',e=>{
+  const scr=document.querySelector('.screen.active');
+  if(!scr) return;
+  if(scr.id==='screen-avanti-game'){
+    if(e.key==='a'||e.key==='A'||e.key==='1') selectAnswer('A');
+    if(e.key==='b'||e.key==='B'||e.key==='2') selectAnswer('B');
+    if(e.key===' '){e.preventDefault();togglePause();}
+  }
+});
+
+// ======================== EREDITÀ ========================
+const EREDITA_WORDS=[
+  {word:"TEVERE",def:"FIUME DI ROMA"},
+  {word:"GIOVE",def:"IL PIÙ GRANDE DEL SISTEMA SOLARE"},
+  {word:"CHIAVE",def:"SI USA PER APRIRE UNA PORTA"},
+  {word:"PIANO",def:"STRUMENTO A CORDE PERCUSSE"},
+  {word:"TRENO",def:"MEZZO SU ROTAIE"},
+  {word:"STELLE",def:"CORPI CELESTI LUMINOSI"},
+  {word:"OROLOGIO",def:"MISURA IL TEMPO"},
+  {word:"CASTELLO",def:"FORTEZZA MEDIEVALE"},
+  {word:"FARFALLA",def:"INSETTO CON ALI COLORATE"},
+  {word:"MONTAGNA",def:"RILIEVO GEOGRAFICO ALTO"},
+  {word:"LIBRO",def:"SI LEGGE E SI SFOGLIA"},
+  {word:"MARE",def:"DISTESA D'ACQUA SALATA"},
+  {word:"LUNA",def:"SATELLITE DELLA TERRA"},
+  {word:"FUOCO",def:"PRODUCE CALORE E LUCE"},
+  {word:"VENTO",def:"ARIA IN MOVIMENTO"},
+  {word:"PONTE",def:"COLLEGA DUE RIVE"},
+  {word:"NUVOLA",def:"FORMAZIONE DI VAPORE ACQUEO"},
+  {word:"FIORE",def:"PARTE COLORATA DELLE PIANTE"},
+  {word:"SPADA",def:"ARMA BIANCA LUNGA"},
+  {word:"COCCODRILLO",def:"RETTILE CON MOLTI DENTI"},
+  {word:"BALENA",def:"PIÙ GRANDE MAMMIFERO DEL MARE"},
+  {word:"VULCANO",def:"ERUTTA LAVA E CENERE"},
+  {word:"DESERTO",def:"LUOGO ARIDO CON MOLTA SABBIA"},
+  {word:"GHIACCIO",def:"ACQUA ALLO STATO SOLIDO"},
+  {word:"PIANOFORTE",def:"STRUMENTO CON 88 TASTI"},
+  {word:"DIAMANTE",def:"LA PIETRA PIÙ DURA"},
+  {word:"GIRAFFA",def:"L'ANIMALE CON IL COLLO PIÙ LUNGO"},
+  {word:"PINGUINO",def:"UCCELLO CHE NON SA VOLARE"},
+  {word:"PIRAMIDE",def:"TOMBA DEI FARAONI EGIZI"},
+  {word:"BUSSOLA",def:"INDICA IL NORD"},
+  {word:"ARCOBALENO",def:"FENOMENO LUMINOSO DOPO LA PIOGGIA"},
+  {word:"FORESTA",def:"GRANDE ESTENSIONE DI ALBERI"},
+  {word:"ISOLA",def:"TERRA CIRCONDATA DA ACQUA"},
+  {word:"NEBBIA",def:"NUVOLA BASSA VICINO AL SUOLO"},
+  {word:"DRAGO",def:"CREATURA MITICA CHE SPUTA FUOCO"},
+  {word:"LABIRINTO",def:"PERCORSO DI CUI È DIFFICILE USCIRE"},
+  {word:"SPECCHIO",def:"RIFLETTE LA TUA IMMAGINE"},
+  {word:"CORONA",def:"LA INDOSSA UN RE O UNA REGINA"},
+  {word:"CHITARRA",def:"STRUMENTO MUSICALE A CORDE PIZZICATE"},
+  {word:"ELICOTTERO",def:"VOLA GRAZIE A PALE ROTANTI"},
+  {word:"CASCATA",def:"SALTO D'ACQUA DA UN DISLIVELLO"},
+  {word:"SCAFFALE",def:"MOBILE CON RIPIANI"},
+  {word:"AURORA",def:"APPARE AL MATTINO PRESTO"},
+  {word:"METEORA",def:"SCIA LUMINOSA NEL CIELO"},
+  {word:"BANCHINA",def:"PIATTAFORMA DELLA STAZIONE"},
+  {word:"QUADERNO",def:"SI USA PER PRENDERE APPUNTI"},
+  {word:"CLESSIDRA",def:"MISURA IL TEMPO CON LA SABBIA"},
+  {word:"ANELLO",def:"GIOIELLO DA DITO"},
+  {word:"GRATTACIELO",def:"EDIFICIO MOLTO ALTO"},
+  {word:"CARAMELLA",def:"DOLCE INCARTATO"},
+  {word:"TORCIA",def:"LUCE PORTATILE"},
+  {word:"ASTRONAUTA",def:"VIAGGIA NELLO SPAZIO"},
+  {word:"MAPPAMONDO",def:"RAPPRESENTA LA TERRA"},
+  {word:"TERMOMETRO",def:"MISURA LA TEMPERATURA"},
+  {word:"PANCHINA",def:"SEDUTA DA PARCO"},
+];
+const EREDITA_EXTRA_BASE=[
+  {word:"BONAPARTE",def:"COGNOME DI NAPOLEONE"},
+  {word:"FILTRO",def:"NELLA BUSTINA DEL TE TRATTIENE LE FOGLIE"},
+  {word:"QUIRINALE",def:"PALAZZO ISTITUZIONALE A ROMA"},
+  {word:"CHIGI",def:"PALAZZO DELLA PRESIDENZA DEL CONSIGLIO"},
+  {word:"MONTECITORIO",def:"PALAZZO DELLA CAMERA DEI DEPUTATI"},
+  {word:"MADAMA",def:"PALAZZO CHE OSPITA IL SENATO"},
+  {word:"VENARIA",def:"REGGIA VICINO TORINO"},
+  {word:"CASERTA",def:"REGGIA BORBONICA FAMOSA"},
+  {word:"POMPEI",def:"SITO ARCHEOLOGICO VESUVIANO"},
+  {word:"COLLEGIO",def:"ISTITUTO SCOLASTICO RESIDENZIALE"},
+  {word:"MAPPA",def:"RAPPRESENTAZIONE CARTOGRAFICA"},
+  {word:"ATLANTE",def:"RACCOLTA DI CARTE GEOGRAFICHE"},
+  {word:"EMISFERO",def:"META` DEL GLOBO TERRESTRE"},
+  {word:"MERIDIANO",def:"LINEA IMMAGINARIA NORD SUD"},
+  {word:"PARALLELO",def:"LINEA IMMAGINARIA EST OVEST"},
+  {word:"ORBITA",def:"TRAIETTORIA ATTORNO A UN CORPO"},
+  {word:"ASTEROIDE",def:"CORPO ROCCIOSO NELLO SPAZIO"},
+  {word:"COMETA",def:"CORPO CELESTE CON CODA"},
+  {word:"QUASAR",def:"OGGETTO COSMICO MOLTO LUMINOSO"},
+  {word:"NEBULOSA",def:"NUBE INTERSTELLARE DI GAS"},
+  {word:"GALASSIA",def:"INSIEME DI STELLE E PIANETI"},
+  {word:"SATELLITE",def:"CORPO CHE ORBITA ATTORNO A UN ALTRO"},
+  {word:"GRAVITA",def:"FORZA CHE ATTIRA I CORPI"},
+  {word:"INERZIA",def:"TENDE A MANTENERE LO STATO DI MOTO"},
+  {word:"FOTONE",def:"QUANTO DI LUCE"},
+  {word:"ELETTRONE",def:"PARTICELLA CON CARICA NEGATIVA"},
+  {word:"PROTONE",def:"PARTICELLA CON CARICA POSITIVA"},
+  {word:"NEUTRONE",def:"PARTICELLA SENZA CARICA"},
+  {word:"CIRCUITO",def:"PERCORSO CHIUSO DELLA CORRENTE"},
+  {word:"RESISTORE",def:"COMPONENTE CHE OPPONE RESISTENZA"},
+  {word:"CONDENSATORE",def:"COMPONENTE CHE ACCUMULA CARICA"},
+  {word:"TRANSISTOR",def:"COMPONENTE ELETTRONICO DI BASE"},
+  {word:"PROCESSORE",def:"CUORE LOGICO DEL COMPUTER"},
+  {word:"TASTIERA",def:"PERIFERICA PER SCRIVERE"},
+  {word:"SCHERMO",def:"DISPOSITIVO DI VISUALIZZAZIONE"},
+  {word:"MONITOR",def:"DISPLAY DEL COMPUTER"},
+  {word:"BROWSER",def:"PROGRAMMA PER NAVIGARE ONLINE"},
+  {word:"SERVER",def:"MACCHINA CHE FORNISCE SERVIZI IN RETE"},
+  {word:"CLIENT",def:"PROGRAMMA CHE RICHIEDE SERVIZI"},
+  {word:"CLOUD",def:"RISORSE INFORMATICHE REMOTE"},
+  {word:"DATABASE",def:"ARCHIVIO STRUTTURATO DI DATI"},
+  {word:"ALGORITMO",def:"SEQUENZA DI ISTRUZIONI LOGICHE"},
+  {word:"ROUTER",def:"SMISTA TRAFFICO DI RETE"},
+  {word:"MODEM",def:"CONNETTE A INTERNET"},
+  {word:"BITCOIN",def:"CRIPTOVALUTA MOLTO NOTA"},
+  {word:"PASSWORD",def:"CHIAVE SEGRETA DI ACCESSO"},
+  {word:"FIREWALL",def:"BARRIERA DI SICUREZZA DI RETE"},
+  {word:"BACKUP",def:"COPIA DI SICUREZZA"},
+  {word:"ARCHIVIO",def:"INSIEME ORDINATO DI DOCUMENTI"},
+  {word:"TIRAMISU",def:"DOLCE ITALIANO AL CAFFE"},
+  {word:"CARBONARA",def:"PASTA CON UOVO E GUANCIALE"},
+  {word:"AMATRICIANA",def:"PASTA TIPICA CON POMODORO E GUANCIALE"},
+  {word:"RISOTTO",def:"PIATTO DI RISO CREMOSO"},
+  {word:"POLENTA",def:"PIATTO A BASE DI FARINA GIALLA"},
+  {word:"RAGU",def:"SUGO DI CARNE COTTO A LUNGO"},
+  {word:"LASAGNA",def:"PRIMO AL FORNO A STRATI"},
+  {word:"PANDORO",def:"DOLCE NATALIZIO VERONESE"},
+  {word:"PANETTONE",def:"DOLCE NATALIZIO MILANESE"},
+  {word:"MOKA",def:"CAFFETTIERA ITALIANA"},
+  {word:"ESPRESSO",def:"CAFFE CORTO ITALIANO"},
+  {word:"CANNOLI",def:"DOLCI SICILIANI CON RICOTTA"},
+  {word:"ARANCINO",def:"RISO RIPIENO FRITTO"},
+  {word:"GONDOLE",def:"IMBARCAZIONI TIPICHE VENEZIANE"},
+  {word:"TRULLO",def:"CASA TIPICA DI ALBEROBELLO"},
+  {word:"NURAGHE",def:"COSTRUZIONE MEGALITICA SARDA"},
+  {word:"DOLOMITI",def:"MONTAGNE DEL NORD ITALIA"},
+  {word:"ETNA",def:"VULCANO ATTIVO SICILIANO"},
+  {word:"VESUVIO",def:"VULCANO DI NAPOLI"},
+  {word:"STROMBOLI",def:"VULCANO NELLE EOLIE"},
+  {word:"GARIBALDI",def:"EROE DEI DUE MONDI"},
+  {word:"CAVOUR",def:"STATISTA DEL RISORGIMENTO"},
+  {word:"MAZZINI",def:"PATRIOTA ITALIANO"},
+  {word:"LEONARDO",def:"GENIO RINASCIMENTALE ITALIANO"},
+  {word:"RAFFAELLO",def:"PITTORE URBINATE"},
+  {word:"CARAVAGGIO",def:"PITTORE DEL CHIAROSCURO"},
+  {word:"BERNINI",def:"SCULTORE BAROCCO"},
+  {word:"VERDI",def:"COMPOSITORE DI OPERE"},
+  {word:"PUCCINI",def:"COMPOSITORE DI TURANDOT"},
+  {word:"VIVALDI",def:"AUTORE DELLE QUATTRO STAGIONI"}
+];
+function generateEreditaExtraEntries(count){
+  const thematicWords=[
+    ["RISORGIMENTO","PERIODO STORICO DELL'UNITA ITALIANA"],["PARLAMENTO","ORGANO LEGISLATIVO DELLO STATO"],["REFERENDUM","VOTAZIONE POPOLARE DIRETTA"],["SENATORE","MEMBRO DEL SENATO"],["DEPUTATO","MEMBRO DELLA CAMERA"],["CARTOGRAFIA","SCIENZA DELLE MAPPE"],["LATITUDINE","COORDINATA NORD SUD"],["LONGITUDINE","COORDINATA EST OVEST"],["PENISOLA","TERRA CIRCONDATA DA MARE SU TRE LATI"],["ARCIPELAGO","INSIEME DI ISOLE"],["FISARMONICA","STRUMENTO A MANTICE"],["VIOLONCELLO","STRUMENTO AD ARCO GRAVE"],["PERCUSSIONE","FAMIGLIA DI STRUMENTI RITMICI"],["CINECITTA","STORICI STUDI CINEMATOGRAFICI ROMANI"],["SCENEGGIATO","PRODOTTO TELEVISIVO A PUNTATE"],["COPERNICO","ASTRONOMO DEL MODELLO ELIOCENTRICO"],["KEPLERO","ASTRONOMO DELLE LEGGI ORBITALI"],["SPETTROSCOPIA","ANALISI DELLA LUCE"],["MICROSCOPIO","STRUMENTO PER OSSERVARE PICCOLO"],["BAROMETRO","MISURA LA PRESSIONE ATMOSFERICA"],["IGROMETRO","MISURA L'UMIDITA DELL'ARIA"],["BIBLIOTECA","LUOGO DI LIBRI E STUDIO"],["ENCICLOPEDIA","OPERA DI CONSULTAZIONE TEMATICA"],["SEMAFORO","DISPOSITIVO DI REGOLAZIONE TRAFFICO"],["ROTATORIA","INCROCIO A CIRCOLAZIONE ANULARE"],["CICLOVIA","PERCORSO RISERVATO ALLE BICI"],["FOCACCIA","PRODOTTO DA FORNO LIGURE"],["PIZZOCCHERI","PASTA TIPICA VALTELLINESE"],["GNOCCHI","BOCCONCINI DI PATATE"],["TORTELLINI","PASTA RIPIENA EMILIANA"],["CAPPUCCINO","CAFFE CON LATTE MONTATO"],["CROSTATA","DOLCE CON CONFETTURA"],["BASILICA","GRANDE CHIESA MONUMENTALE"],["DUOMO","CATTEDRALE PRINCIPALE DI UNA CITTA"],["CAMPANILE","TORRE DELLE CAMPANE"],["OBELISCO","MONUMENTO LAPIDEO AFFUSOLATO"],["COLONNATO","SERIE DI COLONNE"],["MOSAICO","DECORAZIONE A TESSERE"],["AFFRESCO","PITTURA SU INTONACO FRESCO"],["CORNICE","BORDO DECORATIVO DI UN QUADRO"],["TELESCOPIO","STRUMENTO PER OSSERVARE IL CIELO"],["AEROPORTO","SCALO PER AEREI"],["AUTOSTRADA","GRANDE VIA DI SCORRIMENTO"],["METROPOLI","GRANDE CITTA URBANA"],["SCULTURA","OPERA D'ARTE TRIDIMENSIONALE"],["PENNELLO","STRUMENTO DEL PITTORE"],["MARMITTA","PARTE DELLO SCARICO AUTO"],["CRUSCOTTO","PANNELLO DAVANTI AL GUIDATORE"],["FERMATA","PUNTO DI SOSTA DEI MEZZI"],["BINARIO","STRUTTURA SU CUI CORRE IL TRENO"],["BANCHINA","SPAZIO DI ATTESA IN STAZIONE"],["SCAFFALE","RIPIANO DI CONTENIMENTO"],["CALAMITA","OGGETTO CHE ATTIRA IL FERRO"],["SERRATURA","MECCANISMO DELLA CHIAVE"],["PULSANTE","TASTO DA PREMERE"],["STAMPANTE","PERIFERICA CHE STAMPA"],["CAVIDOTTO","PASSAGGIO DI CAVI"],["MONTACARICHI","ASCENSORE PER MERCI"],["CAMPANELLO","SUONO ALLA PORTA"],["CIMITERO","LUOGO DI SEPOLTURA"],["ACQUEDOTTO","INFRASTRUTTURA PER ACQUA"],["ANFITEATRO","EDIFICIO PER SPETTACOLI"],["PORTICCIOLO","PICCOLO PORTO"],["FARO","TORRE LUMINOSA COSTIERA"],["SCALO","AREA DI CARICO E PARTENZA"],["SCUDERIA","LUOGO DI CAVALLI"],["PODCAST","CONTENUTO AUDIO DIGITALE"],["WEBINAR","SEMINARIO ONLINE"],["HARDWARE","PARTE FISICA DEL COMPUTER"],["SOFTWARE","PARTE LOGICA DEL COMPUTER"],["CODIFICA","TRASFORMAZIONE IN CODICE"],["ANALITICA","ANALISI DEI DATI"],["CRITTOGRAFIA","SCRITTURA CIFRATA"],["BANDWIDTH","LARGHEZZA DI BANDA"],["NOTEBOOK","COMPUTER PORTATILE"],["SCANNER","PERIFERICA DI ACQUISIZIONE"],["CARICATORE","DISPOSITIVO DI RICARICA"],["BATTERIA","ACCUMULATORE DI ENERGIA"],["TASTO","ELEMENTO DELLA TASTIERA"],["FOGLIETTO","PICCOLA PAGINA SCRITTA"],["BUSTINA","PICCOLO INVOLUCRO"],["INFUSORE","ACCESSORIO PER TE"],["TEIERA","RECIPIENTE DEL TE"],["TOVAGLIA","COPERTURA DA TAVOLA"],["POSATA","UTENSILE PER MANGIARE"],["COLTELLO","LAMA DA CUCINA"],["FORCHETTA","POSATA A REBBI"],["CUCCHIAIO","POSATA CON COPPA"],["PIATTO","SUPPORTO PER CIBO"],["BICCHIERE","RECIPIENTE PER BERE"],["TERRAZZA","SPAZIO ESTERNO ELEVATO"],["BALCONE","SPORGENZA DI UN EDIFICIO"],["CORTILE","SPAZIO INTERNO A PALAZZO"],["ATRIO","INGRESSO AMPIO"],["CUPOLA","COPERTURA CURVA"],["LOGGIA","GALLERIA APERTA"],["SCALINATA","SERIE DI SCALE"],["PORTALE","INGRESSO MONUMENTALE"],["GUGLIA","ELEMENTO ARCHITETTONICO AGUZZO"],["CHIOSCO","PICCOLA STRUTTURA COMMERCIALE"],["MERCATO","LUOGO DI VENDITA"],["BOTTEGA","PICCOLO LABORATORIO COMMERCIALE"],["ARTIGIANO","LAVORATORE MANUALE SPECIALIZZATO"],["CERAMICA","MATERIALE COTTO"],["PORCELLANA","CERAMICA FINE"],["VETRATA","SUPERFICIE IN VETRO"],["SPECIALE","QUALCOSA DI PARTICOLARE"],["CRONACA","RACCONTO DI FATTI"],["ARCHITETTO","PROGETTISTA DI EDIFICI"],["INGEGNERE","TECNICO PROGETTISTA"],["FONDAZIONE","BASE DI UN EDIFICIO"],["PILASTRO","ELEMENTO VERTICALE PORTANTE"],["TRAVATURA","INSIEME DI TRAVI"],["CANTIERE","AREA DI COSTRUZIONE"],["MURATORE","OPERAIO EDILE"],["INTONACO","RIVESTIMENTO DEL MURO"],["MATTONE","BLOCCO DA COSTRUZIONE"],["CEMENTO","MATERIALE EDILE"],["ASFALTO","RIVESTIMENTO STRADALE"],["PEDAGGIO","PAGAMENTO AUTOSTRADALE"],["VIADOTTO","PONTE SU VALLATA"],["SOTTOPASSO","PASSAGGIO SOTTO STRADA"],["SOVRAPPASSO","PASSAGGIO SOPRA STRADA"],["DEVIAZIONE","CAMBIO DI PERCORSO"],["INCROCIO","PUNTO DI ATTRAVERSAMENTO"],["SEGNAVIA","INDICAZIONE DI PERCORSO"],["BUSSOLA","STRUMENTO DI ORIENTAMENTO"],["BUSSOLOTTO","CONTENITORE CILINDRICO"],["OROLOGERIA","ARTE DEGLI OROLOGI"],["MECCANISMO","INSIEME DI INGRANAGGI"],["INGRANAGGIO","RUOTA DENTATA"],["PENDOLO","CORPO OSCILLANTE"],["CLESSIDRA","MISURA IL TEMPO CON SABBIA"],["METRONOMO","SEGNA IL TEMPO MUSICALE"],["PARTITURA","SCRITTURA MUSICALE"],["MELODIA","SEQUENZA DI SUONI"],["ARMONIA","COMBINAZIONE DI SUONI"],["RITORNELLO","PARTE RIPETUTA DEL BRANO"],["PALCOSCENICO","PIATTAFORMA TEATRALE"],["SIPARIO","TENDA DEL TEATRO"],["RETROSCENA","PARTE DIETRO LE QUINTE"],["TRUCCATORE","ADDETTO AL MAKEUP"],["COSTUMISTA","CREA ABITI DI SCENA"],["TRAMA","INTRECCIO NARRATIVO"],["ROMANZO","OPERA LETTERARIA LUNGA"],["POESIA","TESTO IN VERSI"],["STROFA","GRUPPO DI VERSI"],["RIMA","SUONO FINALE UGUALE"],["SILLABA","UNITA FONETICA"],["DIZIONARIO","RACCOLTA DI PAROLE"],["SINONIMO","PAROLA DI SIGNIFICATO AFFINE"],["CONTRARIO","OPPOSTO SEMANTICO"],["DIALETTO","VARIANTE LOCALE LINGUISTICA"],["GRAMMATICA","INSIEME DI REGOLE LINGUISTICHE"],["VERBO","PARTE DEL DISCORSO"],["AGGETTIVO","QUALIFICA UN NOME"],["AVVERBIO","MODIFICA VERBO O AGGETTIVO"],["PRONOME","SOSTITUISCE IL NOME"],["CONIUGAZIONE","FLESSIONE DEL VERBO"],["ALFABETO","INSIEME DELLE LETTERE"],["PUNTEGGIATURA","SEGNI DEL TESTO"],["CAPOVERSO","INIZIO DI PARAGRAFO"],["MARGINE","SPAZIO LATERALE DELLA PAGINA"],["SEGNALIBRO","INDICA LA PAGINA LETTA"],["QUADERNO","BLOCCO DI FOGLI"],["PENNARELLO","STRUMENTO DI SCRITTURA"],["TEMPERINO","AFFILA LA MATITA"],["GOMMA","CANCELLA IL GRAFFITO"],["LAVAGNA","SUPERFICIE PER SCRIVERE"],["GESSO","BASTONCINO DA LAVAGNA"],["CATTEDRA","BANCO DEL DOCENTE"],["AULA","STANZA DI LEZIONE"],["CAMPANELLA","SEGNA INIZIO O FINE LEZIONE"],["INTERVALLO","PAUSA SCOLASTICA"],["RELAZIONE","TESTO DI ANALISI"],["RICERCA","INDAGINE SU ARGOMENTO"],["ESAME","PROVA DI VALUTAZIONE"],["DIPLOMA","TITOLO DI STUDIO"],["LAUREA","TITOLO UNIVERSITARIO"],["ATENEO","UNIVERSITA"],["POLITECNICO","UNIVERSITA TECNICA"],["LABORATORIO","AMBIENTE DI ESPERIMENTI"],["TESINA","BREVE ELABORATO"],["BIBLIOGRAFIA","ELENCO DELLE FONTI"],["CITAZIONE","RIPRESA DI TESTO"],["APPUNTO","NOTA SCRITTA"],["AGENDA","DIARIO DI IMPEGNI"],["CALENDARIO","SCANSIONE DEI GIORNI"]
+  ];
+  const out=[];
+  for(let i=0;i<count;i++){
+    const item=thematicWords[i%thematicWords.length];
+    out.push({word:item[0],def:item[1]});
+  }
+  return out;
+}
+const EREDITA_POOL=[...EREDITA_WORDS,...EREDITA_EXTRA_BASE,...generateEreditaExtraEntries(200)];
+
+let ereditaState={
+  p1:'GIOCATORE 1',p2:'GIOCATORE 2',
+  prize:150,
+  times:[90,90],activeTurn:1,
+  currentWord:null,revealedCount:0,
+  revealInterval:null,timerInterval:null,
+  playerWords:[[],[]],playerWordIdx:[0,0],
+  controlRevealUnlocked:false
+};
+let ereditaControlWindow=null;
+
+function stopEredita(){
+  clearInterval(ereditaState.revealInterval);
+  clearInterval(ereditaState.timerInterval);
+  if(ereditaControlWindow && !ereditaControlWindow.closed) ereditaControlWindow.close();
+}
+
+function startEredita(){
+  ereditaState.p1=document.getElementById('eredita-p1').value||'GIOCATORE 1';
+  ereditaState.p2=document.getElementById('eredita-p2').value||'GIOCATORE 2';
+  ereditaState.prize=parseInt(document.getElementById('eredita-prize').value)||150;
+  ereditaState.activeTurn=1;
+  ereditaState.times=[90,90];
+  ereditaState.playerWordIdx=[0,0];
+  ereditaState.controlRevealUnlocked=false;
+  const shuffled=shuffleArray([...EREDITA_POOL]);
+  ereditaState.playerWords=[[],[]];
+  shuffled.forEach((w,i)=>ereditaState.playerWords[i%2].push(w));
+  document.getElementById('eredita-name-p1').textContent=ereditaState.p1;
+  document.getElementById('eredita-name-p2').textContent=ereditaState.p2;
+  document.getElementById('eredita-score-p1').textContent='01:30';
+  document.getElementById('eredita-score-p2').textContent='01:30';
+  goTo('screen-eredita-game');
+  ensureEreditaControlWindow();
+  startEreditaPersonalTimer();
+  ereditaLoadCurrentPlayerWord();
+}
+
+function buildEreditaWordList(){
+  const list=document.getElementById('eredita-words-list');
+  list.innerHTML='';
+  EREDITA_WORDS.forEach((w,i)=>{
+    const item=document.createElement('div');
+    item.className='word-item';
+    item.innerHTML=`<div><div class="word-item-name">${w.word}</div><div class="word-item-def">${w.def}</div></div><div class="word-item-len">${w.word.length}</div>`;
+    item.onclick=()=>{
+      ereditaLoadWord(w);
+      document.getElementById('modal-eredita').classList.remove('open');
+    };
+    list.appendChild(item);
+  });
+}
+
+function ereditaLoadWord(wordObj){
+  clearInterval(ereditaState.revealInterval);
+  ereditaState.currentWord=wordObj;
+  ereditaState.revealedCount=0;
+
+  document.getElementById('eredita-answer-box').className='eredita-answer-box';
+  document.getElementById('eredita-def').textContent=wordObj.def;
+
+  const grid=document.getElementById('eredita-letters');
+  grid.innerHTML='';
+  wordObj.word.split('').forEach((_,i)=>{
+    const box=document.createElement('div');
+    box.className='letter-box';
+    box.id='lb-'+i;
+    box.textContent=wordObj.word[i];
+    grid.appendChild(box);
+  });
+
+  updateEreditaUI();
+  updateEreditaControlWindow();
+
+  ereditaState.revealInterval=setInterval(()=>{
+    if(ereditaState.revealedCount>=wordObj.word.length){
+      clearInterval(ereditaState.revealInterval);
+      return;
+    }
+    const box=document.getElementById('lb-'+ereditaState.revealedCount);
+    if(box) box.classList.add('revealed');
+    ereditaState.revealedCount++;
+  },1000);
+}
+
+function ereditaLoadCurrentPlayerWord(){
+  const p=ereditaState.activeTurn-1;
+  const idx=ereditaState.playerWordIdx[p];
+  const list=ereditaState.playerWords[p];
+  if(idx>=list.length){
+    const who=ereditaState.activeTurn===1?ereditaState.p1:ereditaState.p2;
+    showResult('HA VINTO!',who+' ha vinto il montepremi di <strong>'+ereditaState.prize+' €</strong>.');
+    stopEredita();
+    return;
+  }
+  ereditaLoadWord(list[idx]);
+}
+
+function ereditaRevealAll(){
+  const w=ereditaState.currentWord;
+  if(!w) return;
+  clearInterval(ereditaState.revealInterval);
+  for(let i=0;i<w.word.length;i++){
+    const b=document.getElementById('lb-'+i);
+    if(b) b.classList.add('revealed');
+  }
+  ereditaState.revealedCount=w.word.length;
+}
+
+function startEreditaPersonalTimer(){
+  clearInterval(ereditaState.timerInterval);
+  ereditaState.timerInterval=setInterval(()=>{
+    const p=ereditaState.activeTurn-1;
+    ereditaState.times[p]=Math.max(0,ereditaState.times[p]-1);
+    updateEreditaUI();
+    if(ereditaState.times[p]===0){
+      stopEredita();
+      const winner=ereditaState.activeTurn===1?ereditaState.p2:ereditaState.p1;
+      showResult('HA VINTO!',winner+' ha vinto il montepremi di <strong>'+ereditaState.prize+' €</strong>.');
+    }
+  },1000);
+}
+
+function updateEreditaUI(){
+  const s=ereditaState;
+  document.getElementById('eredita-box-p1').className='player-box'+(s.activeTurn===1?' active':'');
+  document.getElementById('eredita-box-p2').className='player-box'+(s.activeTurn===2?' active':'');
+  document.getElementById('eredita-status-p1').textContent=s.activeTurn===1?'TURNO ATTIVO':'IN ATTESA';
+  document.getElementById('eredita-status-p2').textContent=s.activeTurn===2?'TURNO ATTIVO':'IN ATTESA';
+  const t1m=String(Math.floor(s.times[0]/60)).padStart(2,'0');
+  const t1s=String(s.times[0]%60).padStart(2,'0');
+  const t2m=String(Math.floor(s.times[1]/60)).padStart(2,'0');
+  const t2s=String(s.times[1]%60).padStart(2,'0');
+  document.getElementById('eredita-score-p1').textContent=t1m+':'+t1s;
+  document.getElementById('eredita-score-p2').textContent=t2m+':'+t2s;
+  const n=s.activeTurn===1?s.p1:s.p2;
+  document.getElementById('eredita-turn-label').textContent='DEFINIZIONE – TURNO DI '+n;
+}
+
+function ensureEreditaControlWindow(){
+  if(ereditaControlWindow && !ereditaControlWindow.closed) return;
+  ereditaControlWindow=window.open('','ereditaControlWindow','width=700,height=600');
+  if(!ereditaControlWindow) return;
+  ereditaControlWindow.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Eredita Controllo</title><style>body{margin:0;padding:24px;background:#0a0614;color:#f0eaff;font-family:Arial,sans-serif}h1{font-size:24px;margin:0 0 8px;color:#ffe600}p{opacity:.8}#word{font-size:54px;font-weight:700;letter-spacing:3px;margin:20px 0;color:#00e676}#def{font-size:22px;margin:8px 0 20px}button{padding:14px 26px;border:none;border-radius:8px;background:#ffe600;color:#000;font-weight:700;cursor:pointer;font-size:16px;margin-right:8px}</style></head><body><h1 id="player">Giocatore</h1><p>Parola corrente</p><div id="word">-</div><div id="def">-</div><button id="reveal-btn" onclick="window.opener.ereditaRevealControlAnswer()">MOSTRA RISPOSTA</button><button onclick="window.opener.ereditaNextPlayerFromControl()">PROSSIMO GIOCATORE</button></body></html>`);
+  ereditaControlWindow.document.close();
+}
+
+function updateEreditaControlWindow(){
+  ensureEreditaControlWindow();
+  if(!ereditaControlWindow || ereditaControlWindow.closed || !ereditaState.currentWord) return;
+  const playerName=ereditaState.activeTurn===1?ereditaState.p1:ereditaState.p2;
+  ereditaControlWindow.document.getElementById('player').textContent=playerName;
+  if(ereditaState.controlRevealUnlocked){
+    ereditaControlWindow.document.getElementById('word').textContent=ereditaState.currentWord.word;
+    ereditaControlWindow.document.getElementById('def').textContent=ereditaState.currentWord.def;
+    ereditaControlWindow.document.getElementById('reveal-btn').style.display='none';
+  }else{
+    ereditaControlWindow.document.getElementById('word').textContent='••••••';
+    ereditaControlWindow.document.getElementById('def').textContent='Premi "Mostra risposta" una volta per sbloccare il pannello.';
+    ereditaControlWindow.document.getElementById('reveal-btn').style.display='inline-block';
+  }
+}
+function ereditaRevealControlAnswer(){
+  ereditaState.controlRevealUnlocked=true;
+  updateEreditaControlWindow();
+}
+window.ereditaNextPlayerFromControl=ereditaNextPlayer;
+window.ereditaRevealControlAnswer=ereditaRevealControlAnswer;
+
+function ereditaNextPlayer(){
+  clearInterval(ereditaState.revealInterval);
+  const p=ereditaState.activeTurn-1;
+  ereditaState.playerWordIdx[p]++;
+  ereditaState.activeTurn=ereditaState.activeTurn===1?2:1;
+  goTo('screen-eredita-game');
+  ereditaLoadCurrentPlayerWord();
+}
+
+// ======================== REAZIONE A CATENA ========================
+const REAZ_WORDS=[
+  "CHIAVI","SPERANZA","FARFALLA","TRENO","LUNA","VENTO","CASTELLO","STELLA",
+  "MARE","FUOCO","LIBRO","OROLOGIO","PONTE","NUVOLA","FIORE","SPADA",
+  "MONTAGNA","ACQUA","SOLE","TERRA","ARIA","GHIACCIO","OMBRA","LUCE",
+  "FORESTA","DESERTO","ISOLA","VULCANO","FIUME","NEBBIA","CORONA","SPECCHIO",
+  "CHITARRA","DRAGO","DIAMANTE","LABIRINTO","BUSSOLA","ARCOBALENO","PINGUINO",
+  "GIRAFFA","ELICOTTERO","PIANOFORTE","COCCODRILLO","BALENA","PIRAMIDE",
+  "OMBRELLO","MAGLIETTA","CUSCINO","LANTERNA","TELEFONO","FINESTRA","LAMPADA",
+  "BICCHIERE","FORCHETTA","BOTTONE","ZAINO","CALENDARIO","FRANCOBOLLO","BICICLETTA",
+  "SEMAFORO","BIBLIOTECA","AEROPORTO","VULCANO","FARMACIA","SUPERMERCATO","POLTRONA"
+];
+const REAZ_EXTRA_WORDS=[
+  "BONAPARTE","QUIRINALE","MONTECITORIO","MADAMA","COLONNATO","BASILICA","OBELISCO","CARTOGRAFIA","LATITUDINE","LONGITUDINE","ARCIPELAGO","PENISOLA","GALASSIA","NEBULOSA","ASTEROIDE","COMETA","SATELLITE","GRAVITA","PROTONE","NEUTRONE",
+  "ELETTRONE","FOTONE","QUASAR","ORBITA","TELESCOPIO","MICROSCOPIO","BAROMETRO","IGROMETRO","TERMOMETRO","CIRCUITO","RESISTORE","TRANSISTOR","CONDENSATORE","ALGORITMO","PROCESSORE","TASTIERA","MONITOR","BROWSER","ROUTER","DATABASE",
+  "SOFTWARE","HARDWARE","BACKUP","FIREWALL","PASSWORD","SERVER","CLIENT","CLOUD","NOTEBOOK","SCANNER","STAMPANTE","BATTERIA","CARICATORE","CODIFICA","CRITTOGRAFIA","BANDWIDTH","WEBINAR","PODCAST","GITHUB","JAVASCRIPT",
+  "HTML","PYTHON","WINDOWS","ANDROID","IOS","INFLUENCER","STREAMER","CONTENT","CREATOR","SANREMO","MANESKIN","BENIGNI","BONOLIS","LIORNI","INSEGNO","GARIBALDI","CAVOUR","MAZZINI","RISORGIMENTO","REFERENDUM",
+  "SENATORE","DEPUTATO","PARLAMENTO","COSTITUZIONE","ATLANTE","BUSSOLA","MERIDIANO","PARALLELO","EMISFERO","DOLOMITI","VESUVIO","STROMBOLI","ETNA","TRULLO","NURAGHE","POMPEI","CASERTA","VENARIA","CHIANTI","LAMBRUSCO",
+  "ESPRESSO","CAPPUCCINO","MOKA","ARANCINO","TIRAMISU","LASAGNA","CARBONARA","AMATRICIANA","RISOTTO","POLENTA","RAGU","PANETTONE","PANDORO","CANNOLI","FOCACCIA","TORTELLINI","PIZZOCCHERI","GNOCCHI","CROSTATA","TEIERA",
+  "INFUSORE","BUSTINA","FILTRO","PORTALE","SCALINATA","LOGGIA","CUPOLA","DUOMO","CAMPANILE","MOSAICO","AFFRESCO","CORNICE","PENNELLO","SCULTURA","PALCOSCENICO","SIPARIO","RETROSCENA","TRAMA","ROMANZO","POESIA",
+  "DIZIONARIO","SINONIMO","CONTRARIO","GRAMMATICA","ALFABETO","VERBO","AGGETTIVO","AVVERBIO","PRONOME","PUNTEGGIATURA","QUADERNO","PENNARELLO","TEMPERINO","LAVAGNA","GESSO","CATTEDRA","AULA","INTERVALLO","ESAME","LAUREA",
+  "ATENEO","LABORATORIO","BIBLIOGRAFIA","CITAZIONE","APPUNTO","AGENDA","CALENDARIO","MERCATO","BOTTEGA","ARTIGIANO","CERAMICA","PORCELLANA","VETRATA","CANTIERE","MURATORE","INTONACO","MATTONE","CEMENTO","ASFALTO","VIADOTTO",
+  "SOTTOPASSO","SOVRAPPASSO","INCROCIO","SEGNAVIA","OROLOGERIA","MECCANISMO","INGRANAGGIO","PENDOLO","METRONOMO","PARTITURA","MELODIA","ARMONIA","RITORNELLO","FISARMONICA","VIOLONCELLO","COPERNICO","KEPLERO","LEONARDO","RAFFAELLO","CARAVAGGIO"
+];
+const REAZ_POOL=[...REAZ_WORDS,...REAZ_EXTRA_WORDS];
+
+let reazioneState={
+  player:'GIOCATORE 1',
+  timerSec:60,timeLeft:60,timerInterval:null,
+  passes:3,passesLeft:3,score:0,
+  wordIdx:0,words:[],stopped:false,round:1
+};
+
+function stopReazione(){clearInterval(reazioneState.timerInterval);}
+
+function startReazione(){
+  reazioneState.player=document.getElementById('reazione-player').value||'GIOCATORE 1';
+  reazioneState.timerSec=parseInt(document.getElementById('reazione-time').value)||60;
+  reazioneState.passes=parseInt(document.getElementById('reazione-passes').value)||3;
+  reazioneState.passesLeft=reazioneState.passes;
+  reazioneState.score=0;
+  reazioneState.words=shuffleArray([...REAZ_POOL]);
+  reazioneState.wordIdx=0;
+  reazioneState.stopped=false;
+  reazioneState.round=1;
+  reazioneState.timeLeft=reazioneState.timerSec;
+  goTo('screen-reazione-game');
+  document.getElementById('reazione-round-label').textContent=reazioneState.player;
+  updateReazioneWord();
+  updateReazioneScore();
+  startReazioneTimer();
+}
+
+function startReazioneTimer(){
+  clearInterval(reazioneState.timerInterval);
+  reazioneState.stopped=false;
+  document.getElementById('reazione-stop-btn').textContent='⏸ STOP';
+  updateReazioneTimerDisplay();
+  reazioneState.timerInterval=setInterval(()=>{
+    if(reazioneState.stopped) return;
+    reazioneState.timeLeft--;
+    updateReazioneTimerDisplay();
+    if(reazioneState.timeLeft<=0){
+      clearInterval(reazioneState.timerInterval);
+    }
+  },1000);
+}
+
+function updateReazioneTimerDisplay(){
+  const t=reazioneState.timeLeft;
+  const el=document.getElementById('reazione-timer-display');
+  el.textContent=':'+String(t).padStart(2,'0');
+  if(reazioneState.stopped) el.className='reaz-timer stopped';
+  else if(t<=10) el.className='reaz-timer urgent';
+  else el.className='reaz-timer';
+}
+
+function reazioneToggleStop(){
+  reazioneState.stopped=!reazioneState.stopped;
+  document.getElementById('reazione-stop-btn').textContent=reazioneState.stopped?'▶ RIPRENDI':'⏸ STOP';
+  updateReazioneTimerDisplay();
+}
+
+function updateReazioneWord(){
+  const w=reazioneState.words[reazioneState.wordIdx%reazioneState.words.length];
+  document.getElementById('reazione-word').textContent=w;
+  document.getElementById('reazione-pass-count').textContent=reazioneState.passesLeft;
+  document.getElementById('reazione-pass-btn').disabled=(reazioneState.passesLeft<=0);
+}
+
+function updateReazioneScore(){
+  document.getElementById('reazione-score').textContent=reazioneState.score;
+}
+
+function reazionePass(){
+  if(reazioneState.passesLeft<=0) return;
+  reazioneState.passesLeft--;
+  reazioneState.wordIdx++;
+  updateReazioneWord();
+}
+
+function reazioneScore(delta){
+  reazioneState.score=Math.max(0,reazioneState.score+delta);
+  updateReazioneScore();
+}
+
+function reazioneCorrect(){
+  reazioneState.score++;
+  updateReazioneScore();
+  reazioneState.wordIdx++;
+  reazioneState.round++;
+  updateReazioneWord();
+  reazioneState.stopped=false;
+  document.getElementById('reazione-stop-btn').textContent='⏸ STOP';
+  updateReazioneTimerDisplay();
+}
+
+function reazioneNextWord(){
+  reazioneState.wordIdx++;
+  reazioneState.round++;
+  updateReazioneWord();
+  reazioneState.stopped=false;
+  document.getElementById('reazione-stop-btn').textContent='⏸ STOP';
+  updateReazioneTimerDisplay();
+}
+
+// ======================== RESULT ========================
+function showResult(title,sub){
+  document.getElementById('result-title').textContent=title;
+  document.getElementById('result-sub').innerHTML=sub;
+  goTo('screen-result');
+}
+
+// ======================== TEXT-TO-SPEECH ========================
+let isMuted=false;
+const synth=window.speechSynthesis;
+
+function toggleMute(){
+  isMuted=!isMuted;
+  const btn=document.getElementById('muteBtn');
+  btn.classList.toggle('muted',isMuted);
+  btn.textContent=isMuted?'🔇':'🔊';
+  if(isMuted) synth.cancel();
+}
+
+function speak(text){
+  if(isMuted || !text || text==='-') return;
+  synth.cancel();
+  const utterance=new SpeechSynthesisUtterance(text);
+  utterance.lang='it-IT';
+  utterance.rate=1.15;
+  utterance.pitch=1;
+  utterance.volume=1;
+  synth.speak(utterance);
+}
+
+// Monitora Avanti Un Altro
+let lastAvantiQuestion='';
+setInterval(()=>{
+  const questionEl=document.getElementById('avanti-question');
+  if(questionEl && questionEl.textContent && questionEl.textContent !== lastAvantiQuestion && questionEl.textContent !== '-'){
+    lastAvantiQuestion=questionEl.textContent;
+    speak(questionEl.textContent);
+  }
+},200);
+
+// Monitora L'Eredità
+let lastEreditaDef='';
+setInterval(()=>{
+  const defEl=document.getElementById('eredita-def');
+  if(defEl && defEl.textContent && defEl.textContent !== lastEreditaDef && defEl.textContent !== '-'){
+    lastEreditaDef=defEl.textContent;
+    speak(defEl.textContent);
+  }
+},200);
+
+
+</script>
+</body>
+</html>
